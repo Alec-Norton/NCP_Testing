@@ -169,7 +169,7 @@ number_of_models = int(args.model_number)
 batch_size = int(args.batch_size)
 epochs = int(args.epochs)
 
-base_lr = .01
+base_lr = .005
 train_steps = reshape // batch_size
 decay_lr = .95
 
