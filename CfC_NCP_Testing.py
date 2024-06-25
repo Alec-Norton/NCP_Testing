@@ -129,7 +129,7 @@ x_train = pd.concat([x_train, csv_file4])
 x_train = pd.concat([x_train, csv_file5])
 '''
 
-y_train = x_train.loc[:, ['chunk', 'label']]
+y_train = x_train.iloc[:, [8, 9]]
 x_train.pop('chunk')
 x_train.pop('label')
 
@@ -178,7 +178,7 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
 
 
 if (args.opt == "adam"):
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = .5)
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = 1)
 elif (args.opt == "SGD"):
     cfc_optimizer = tf.keras.optimizers.SGD()
 else:
