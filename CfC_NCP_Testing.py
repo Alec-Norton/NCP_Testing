@@ -28,7 +28,6 @@ import ncps
 from ncps.tf import CfC
 from ncps.tf import LTC
 import matplotlib.pyplot as plt
-import seaborn as sns
 import glob
 import time 
 from sklearn.model_selection import train_test_split
