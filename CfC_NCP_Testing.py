@@ -116,7 +116,7 @@ for csv_file in csv_files:
 
 
 
-
+'''
 csv_file1 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_97.csv')
 csv_file2 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
 csv_file3 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_15.csv')
@@ -128,6 +128,7 @@ x_train = pd.concat([x_train, csv_file2])
 x_train = pd.concat([x_train, csv_file3])
 x_train = pd.concat([x_train, csv_file4])
 x_train = pd.concat([x_train, csv_file5])
+'''
 
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
@@ -168,7 +169,7 @@ number_of_models = int(args.model_number)
 batch_size = int(args.batch_size)
 epochs = int(args.epochs)
 
-base_lr = .005
+base_lr = .01
 train_steps = reshape // batch_size
 decay_lr = .95
 
@@ -178,7 +179,7 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
 
 
 if (args.opt == "adam"):
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = .75)
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = .5)
 elif (args.opt == "SGD"):
     cfc_optimizer = tf.keras.optimizers.SGD()
 else:
