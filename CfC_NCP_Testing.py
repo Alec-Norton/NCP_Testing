@@ -33,7 +33,7 @@ import glob
 import time 
 from sklearn.model_selection import train_test_split
 
-
+print("woah")
 
 keras = tf.keras
 #define a function to return a NCP CfC Model
