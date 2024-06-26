@@ -172,6 +172,9 @@ base_lr = .005
 train_steps = reshape // batch_size
 decay_lr = .95
 
+print("\n")
+print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = 1")
+
 learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
         base_lr, train_steps, decay_lr
     )
