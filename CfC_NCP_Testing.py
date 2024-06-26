@@ -105,7 +105,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('\home\arnorton\NCP_Testing\size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
