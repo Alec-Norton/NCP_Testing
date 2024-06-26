@@ -12,7 +12,7 @@ python3 -m venv myenv
 source myenv/bin/activate
 nvidia-smi
 pip install --upgrade pip
-pip install tensorflow[and-cuda]==2.15.0
+pip install tensorflow[and-cuda]
 
 module load cuda12.2
 
