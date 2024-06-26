@@ -184,7 +184,7 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
 
 
 if (args.opt == "adam"):
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = 1)
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = 2)
 elif (args.opt == "SGD"):
     cfc_optimizer = tf.keras.optimizers.SGD()
 else:
