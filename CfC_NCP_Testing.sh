@@ -19,7 +19,7 @@ pip install matplotlib
 
 module load cuda12.2
 
-python CfC_NCP_Testing.py 120 40 .5 32 10 3 adam sparsecategoricalcrossentropy
+python CfC_NCP_Testing.py ${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8}
 
 
 

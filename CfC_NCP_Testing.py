@@ -11,12 +11,13 @@ parser.add_argument("size")
 parser.add_argument("output_size")
 parser.add_argument("sparsity")
 
+#For opt
+parser.add_argument("base_lr")
+parser.add_argument("clipnorm")
 #CfC args
 parser.add_argument("batch_size")
 parser.add_argument("epochs")
 parser.add_argument("model_number")
-parser.add_argument("opt")
-parser.add_argument("loss_fun")
 
 args = parser.parse_args()
 
@@ -73,7 +74,7 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
     callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
 
     start = time.process_time()
-    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose =1, callbacks = [callback])
+    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 2, callbacks = [callback])
     end = time.process_time()
     test_accuracies = hist.history["val_sparse_categorical_accuracy"]
     print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
@@ -171,9 +172,10 @@ number_of_models = int(args.model_number)
 batch_size = int(args.batch_size)
 epochs = int(args.epochs)
 
-base_lr = .005
+base_lr = float(args.base_lr)
 train_steps = reshape // batch_size
 decay_lr = .95
+clipnorm = float(args.clipnorm)
 
 
 
@@ -182,26 +184,18 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
     )
 
 
-if (args.opt == "adam"):
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = 2)
-elif (args.opt == "SGD"):
-    cfc_optimizer = tf.keras.optimizers.SGD()
-else:
-    print("Incorrect optimizer option; choose 'adam' or 'SGD")
-    raise SystemExit(1)
+cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = clipnorm)
 
-if(args.loss_fun == "sparsecategoricalcrossentropy"):
-    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
-else:
-    print("Incorrect loss_function; choose 'sparsecategoricalcrossentropy")
-    raise SystemExit(1)
+cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+
 
 
 
 score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
 print("\n")
-print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = 1")
+print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
 print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
 print("\n")
