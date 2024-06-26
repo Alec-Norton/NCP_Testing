@@ -105,7 +105,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('\home\arnorton\NCP_Testing\size_30sec_150ts_stride_03ts\*.csv')
 
 
 x_train = pd.DataFrame()
@@ -191,7 +191,7 @@ else:
     print("Incorrect loss_function; choose 'sparsecategoricalcrossentropy")
     raise SystemExit(1)
 
-
+print("\n")
 print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
 print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
 
