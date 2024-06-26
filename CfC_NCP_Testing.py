@@ -175,8 +175,7 @@ base_lr = .005
 train_steps = reshape // batch_size
 decay_lr = .95
 
-print("\n")
-print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = 1")
+
 
 learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
         base_lr, train_steps, decay_lr
@@ -197,8 +196,13 @@ else:
     print("Incorrect loss_function; choose 'sparsecategoricalcrossentropy")
     raise SystemExit(1)
 
-print("\n")
-print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
-print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
+
 
 score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
+
+print("\n")
+print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = 1")
+print("\n")
+print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
+print("\n")
+print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
