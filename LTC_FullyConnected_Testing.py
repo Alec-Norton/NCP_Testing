@@ -1,3 +1,24 @@
+import sys
+import argparse
+
+
+
+
+parser = argparse.ArgumentParser()
+
+#For Wiring
+parser.add_argument("size")
+
+#For opt
+parser.add_argument("base_lr")
+parser.add_argument("clipnorm")
+#CfC args
+parser.add_argument("batch_size")
+parser.add_argument("epochs")
+parser.add_argument("model_number")
+
+args = parser.parse_args()
+
 import tensorflow as tf
 
 import pandas as pd
@@ -6,52 +27,30 @@ import ncps
 from ncps.tf import CfC
 from ncps.tf import LTC
 import matplotlib.pyplot as plt
-import seaborn as sns
 import glob
 import time 
 from sklearn.model_selection import train_test_split
 
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
-import sys
-
-import argparse
-
-parser = argparse.ArgumentParser()
-
-
-parser.add_argument("batch_size")
-parser.add_argument("epochs")
-parser.add_argument("model_number")
-
-
-args = parser.parse_args()
 
 
 keras = tf.keras
+#define a function to return a NCP CfC Model
+def LTC_FullyConnected(input, ncp_size, ncp_output_size, ncp_sparsity_level):
+    #Set up architecture for Neural Circuit Policy
+    wiring = ncps.wirings.FullyConnected(ncp_size)
+    #Begin constructing layer, starting with input
 
-def CNN(input):
-    #Algorithm make up is CNN2-a from Trakoolqilaiwan et all.
-    #x = tf.keras.layers.Conv2D(32, 3)(input)
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
-
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.75)(x)
-
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.9)(x)
-
-    x = tf.keras.layers.Flatten()(x)
-
-    x = tf.keras.layers.Dense(256, activation = "relu")(x)
-    x = tf.keras.layers.Dense(128, activation = "relu")(x)
-
+    x = LTC(wiring, return_sequences= True)(input)
+    x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
+    model = tf.keras.Model(inputs = input, outputs = output)
     
-    return tf.keras.Model(inputs = input, outputs = output)
+    
+    #Return model
+    return model
+
 
 def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs):
     #Compile the Model
@@ -62,8 +61,10 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
 
     #Fit the model and return accuracy
     #Get beginning of time
+    callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
+
     start = time.process_time()
-    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose =1)
+    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 2, callbacks = [callback])
     end = time.process_time()
     test_accuracies = hist.history["val_sparse_categorical_accuracy"]
     print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
@@ -89,13 +90,16 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     print("-------------------------------------------------------------------")
 
 
+    #print(f"Test Accuracy: {np.mean(acc):(1/model_number)}\\% $\\pm$ {np.std(acc):(1/model_number)}")
+
+
 #Actual Execution of Code: 
 
 #Load Data Here
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
@@ -105,11 +109,21 @@ for csv_file in csv_files:
 
 
 
+'''
+csv_file1 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_97.csv')
+csv_file2 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
+csv_file3 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_15.csv')
+csv_file4 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_31.csv')
+csv_file5 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_45.csv')
 
-#csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
-#x_train = csv_file.copy()
+x_train = csv_file1.copy()
+x_train = pd.concat([x_train, csv_file2])
+x_train = pd.concat([x_train, csv_file3])
+x_train = pd.concat([x_train, csv_file4])
+x_train = pd.concat([x_train, csv_file5])
+'''
 
-y_train = x_train.loc[:, ['chunk', 'label']]
+y_train = x_train.iloc[:, [8, 9]]
 x_train.pop('chunk')
 x_train.pop('label')
 
@@ -139,21 +153,39 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
+#CfC NCP
+ncp_size = int(args.size)
 
-#Pre-Processing:
-
-#CNN
 
 number_of_models = int(args.model_number)
 batch_size = int(args.batch_size)
 epochs = int(args.epochs)
 
-cnn_optimizer = tf.keras.optimizers.Adam()
+base_lr = float(args.base_lr)
+train_steps = reshape // batch_size
+decay_lr = .95
+clipnorm = float(args.clipnorm)
 
-cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+
+learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        base_lr, train_steps, decay_lr
+    )
+
+
+cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = clipnorm)
+
+cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
 
-score(CNN(input), x_train, y_train, cnn_optimizer, cnn_loss_fun, number_of_models, batch_size, epochs)
+
+
+score(LTC_FullyConnected(input, ncp_size), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
+
+print("\n")
+print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
+print("\n")
+print("Size of Model: " + str(ncp_size))
 print("\n")
 print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
