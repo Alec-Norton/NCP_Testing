@@ -6,6 +6,7 @@
 #SBATCH -t 12:00:00
 #SBATCH --gres=gpu:2
 #SBATCH -C A100|V100
+
 module load python/3.10.2
 python3 -m venv myenv
 source myenv/bin/activate
@@ -19,7 +20,4 @@ pip install matplotlib
 
 module load cuda12.2
 
-python CfC_NCP_Testing.py 20 5 .5 32 10 3 adam sparsecategoricalcrossentropy
-
-
-
+python GPU_Test.py
