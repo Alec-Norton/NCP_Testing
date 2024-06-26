@@ -9,7 +9,7 @@
 module load python/3.10.2
 python3 -m venv myenv
 source myenv/bin/activate
-pip install tensorflow-gpu==2.15.0
+pip install tensorflow==2.15.0
 pip install pandas
 pip install numpy
 pip install ncps
