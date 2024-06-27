@@ -10,6 +10,7 @@ import seaborn as sns
 import glob
 import time 
 from sklearn.model_selection import train_test_split
+import keras_tuner as kt
 
 
 import sys
@@ -32,22 +33,22 @@ keras = tf.keras
 def CNN(input):
     #Algorithm make up is CNN2-a from Trakoolqilaiwan et all.
     #x = tf.keras.layers.Conv2D(32, 3)(input)
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
     x = tf.keras.layers.Dropout(.75)(x)
 
-    x = tf.keras.layers.Conv1D(32, int(args.kernel_size))(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
     x = tf.keras.layers.Dropout(.9)(x)
 
     x = tf.keras.layers.Flatten()(x)
 
+    x = tf.keras.layers.Dense(512, activation = "relu")(x)
     x = tf.keras.layers.Dense(256, activation = "relu")(x)
-    x = tf.keras.layers.Dense(128, activation = "relu")(x)
 
     output = tf.keras.layers.Dense(4)(x)
     
@@ -154,6 +155,6 @@ cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
 
-score(CNN(input), x_train, y_train, cnn_optimizer, cnn_loss_fun, number_of_models, batch_size, epochs)
+score(CNN(input), x_train, y_train, x_valid, y_valid, cnn_optimizer, cnn_loss_fun, number_of_models, batch_size, epochs)
 print("\n")
 print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
