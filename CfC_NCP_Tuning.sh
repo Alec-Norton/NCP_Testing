@@ -16,6 +16,7 @@ pip install ncps
 pip install glob
 pip install sklearn
 pip install matplotlib
+pip install keras-tuner
 
 module load cuda12.2
 

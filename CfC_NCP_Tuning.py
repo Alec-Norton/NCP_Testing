@@ -78,7 +78,8 @@ def CfC_NCP_model_builder(hp):
 
     
 
-    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)   
+    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)(input)
+    x = tf.keras.layers.Flatten(x)
     output = tf.keras.layers.Dense(4)(x)
 
     model = tf.keras.Model(inputs = input, outputs = output)
