@@ -6,7 +6,6 @@ import ncps
 from ncps.tf import CfC
 from ncps.tf import LTC
 import matplotlib.pyplot as plt
-import seaborn as sns
 import glob
 import time 
 from sklearn.model_selection import train_test_split
@@ -18,7 +17,7 @@ import keras_tuner as kt
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
@@ -128,6 +127,8 @@ print('Best epoch: %d' % (best_epoch,))
 hypermodel = tuner.hypermodel.build(best_hps)
 
 hypermodel.summary()
+
+
 
 # Retrain the model
 hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
