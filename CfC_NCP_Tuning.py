@@ -120,9 +120,6 @@ The hyperparameter search is complete. Optimal values below:
       mixed memory = {best_hps.get('mixed_memory')},
       mode = {best_hps.get('mode')},
       backbone_activation = {best_hps.get('backbone_activation')},
-      backbone_units = {best_hps.get('backbone_units')},
-      backbone_layers = {best_hps.get('backbone_layer')},
-      backbone_dropout = {best_hps.get('backbone_dropout')}
 
 
 """)

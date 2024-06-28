@@ -125,8 +125,6 @@ The hyperparameter search is complete. Optimal values below:
       recurrent_command_synapses = {best_hps.get('recurrent_command_synapses')},
       motor_fanin = {best_hps.get('motor_fanin')},
       mixed memory = {best_hps.get('mixed_memory')},
-      mode = {best_hps.get('mode')},
-      backbone_activation = {best_hps.get('backbone_activation')},
       learning_rate = {best_hps.get('learning_rate')},
       decay_rate = {best_hps.get('decay rate')}
       clipnorm = {best_hps.get('clipnorm')}
