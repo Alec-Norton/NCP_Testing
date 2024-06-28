@@ -104,9 +104,14 @@ tuner = kt.Hyperband(CfC_FullyConnected_model_builder,
                      objective = 'val_accuracy',
                      max_epochs = 10)
 
-stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
+tuner = kt.Hyperband(CfC_FullyConnected_model_builder,
+                     objective = 'val_accuracy',
+                     max_epochs = 10)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early])
+stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
+stop_early1 = tf.keras.callbacks.TerminateOnNaN()
+
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1])
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
