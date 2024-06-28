@@ -1,24 +1,3 @@
-import sys
-import argparse
-
-
-
-
-parser = argparse.ArgumentParser()
-
-#For Wiring
-parser.add_argument("size")
-
-#For opt
-parser.add_argument("base_lr")
-parser.add_argument("clipnorm")
-#CfC args
-parser.add_argument("batch_size")
-parser.add_argument("epochs")
-parser.add_argument("model_number")
-
-args = parser.parse_args()
-
 import tensorflow as tf
 
 import pandas as pd
@@ -30,68 +9,7 @@ import matplotlib.pyplot as plt
 import glob
 import time 
 from sklearn.model_selection import train_test_split
-
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-
-
-
-keras = tf.keras
-#define a function to return a NCP CfC Model
-def CFC_FullyConnected(input, ncp_size, ncp_output_size, ncp_sparsity_level):
-    #Set up architecture for Neural Circuit Policy
-    wiring = ncps.wirings.FullyConnected(ncp_size)
-    #Begin constructing layer, starting with input
-
-    x = CfC(wiring, return_sequences= True)(input)
-    x = keras.layers.Flatten()(x)
-    output = tf.keras.layers.Dense(4)(x)
-    model = tf.keras.Model(inputs = input, outputs = output)
-    
-    
-    #Return model
-    return model
-
-
-def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs):
-    #Compile the Model
-    model.compile(optimizer = opt, loss = loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-
-    #Return a summary of the model and its (non)trainable paramaters
-    model.summary()
-
-    #Fit the model and return accuracy
-    #Get beginning of time
-    callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
-
-    start = time.process_time()
-    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 2, callbacks = [callback])
-    end = time.process_time()
-    test_accuracies = hist.history["val_sparse_categorical_accuracy"]
-    print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
-    return np.max(test_accuracies), end-start
-
-#Based on the model_number, create a model and train on specified optimizer, loss_function, validation_split, batch_size, and some epochs
-#Then return the mean and standard deviation of the accuracy of these models. 
-def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number, batch_size, epochs):
-    acc = []
-    dur = []
-    for i in range(model_number):
-        print("Model: " + str(i))
-        max_accuracy, time = eval(model, i, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs)
-        dur.append(time)
-        acc.append(100 * max_accuracy)
-    acc_average = np.mean(acc)
-    acc_std = np.std(acc)
-    dur_average = np.mean(dur)
-    dur_std = np.std(dur)
-    print("-------------------------------------------------------------------")
-    print("Average Test Accuracy: " + str(acc_average) + " Standard Deviation Test Accuracy: " + str(acc_std))
-    print("Average Time Training: " + str(dur_average) + " Standard Deviation Time: " + str(dur_std))
-    print("-------------------------------------------------------------------")
-
-
-    #print(f"Test Accuracy: {np.mean(acc):(1/model_number)}\\% $\\pm$ {np.std(acc):(1/model_number)}")
-
+import keras_tuner as kt
 
 #Actual Execution of Code: 
 
@@ -109,21 +27,11 @@ for csv_file in csv_files:
 
 
 
-'''
-csv_file1 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_97.csv')
-csv_file2 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
-csv_file3 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_15.csv')
-csv_file4 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_31.csv')
-csv_file5 = pd.read_csv('size_30sec_150ts_stride_03ts\sub_45.csv')
 
-x_train = csv_file1.copy()
-x_train = pd.concat([x_train, csv_file2])
-x_train = pd.concat([x_train, csv_file3])
-x_train = pd.concat([x_train, csv_file4])
-x_train = pd.concat([x_train, csv_file5])
-'''
+#csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
+#x_train = csv_file.copy()
 
-y_train = x_train.iloc[:, [8, 9]]
+y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
 x_train.pop('label')
 
@@ -153,39 +61,83 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
-#CfC NCP
-ncp_size = int(args.size)
+def CfC_FullyConnected_model_builder(hp):
+    units = hp.Int('units', min_value = 10, max_value = 100, step = 1)
+    
+
+    wiring = ncps.wirings.FullyConnected(units = units)
+
+    mixed_memory = hp.Boolean('mixed_memory', default = False)
+    mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
+    backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
+
+    #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
+    #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
+    #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
+
+    
+
+    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)(input)
+    x = tf.keras.layers.Flatten()(x)
+    output = tf.keras.layers.Dense(4)(x)
+
+    model = tf.keras.Model(inputs = input, outputs = output)
+
+    hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
+    hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
+    train_steps = reshape // 32
+    decay_lr = hp.Float('decay rate', min_value = .5, max_value = .95, step = .5)
 
 
-number_of_models = int(args.model_number)
-batch_size = int(args.batch_size)
-epochs = int(args.epochs)
 
-base_lr = float(args.base_lr)
-train_steps = reshape // batch_size
-decay_lr = .95
-clipnorm = float(args.clipnorm)
-
-
-
-learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
-        base_lr, train_steps, decay_lr
+    learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        hp_learning_rate, train_steps, decay_lr
     )
 
+    model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = hp_clipnorm),
+                  loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
+                  metrics = ['accuracy'])
+    
+    return model
 
-cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = clipnorm)
+tuner = kt.Hyperband(CfC_FullyConnected_model_builder,
+                     objective = 'val_accuracy',
+                     max_epochs = 10)
 
-cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
+
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early])
+
+best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
+
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      units = {best_hps.get('units')},
+      mixed memory = {best_hps.get('mixed_memory')},
+      mode = {best_hps.get('mode')},
+      backbone_activation = {best_hps.get('backbone_activation')},
+      learning_rate = {best_hps.get('learning_rate')},
+      decay rate = {best_hps.get('decay rate')},
+      clipnorm = {best_hps.get('clipnorm')}
+
+
+""")
+model = tuner.hypermodel.build(best_hps)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
+
+val_acc_per_epoch = history.history['val_accuracy']
+best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
+print('Best epoch: %d' % (best_epoch,))
+
+
+hypermodel = tuner.hypermodel.build(best_hps)
+
+hypermodel.summary()
 
 
 
+# Retrain the model
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
 
-
-score(CFC_FullyConnected(input, ncp_size), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
-
-print("\n")
-print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
-print("\n")
-print("Size of Model: " + str(ncp_size))
-print("\n")
-print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
+eval_result = hypermodel.evaluate(x_valid, y_valid)
+print("[test loss, test accuracy]:", eval_result)

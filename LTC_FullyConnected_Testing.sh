@@ -19,4 +19,4 @@ pip install matplotlib
 
 module load cuda12.2
 
-python LTC_FullyConnected_Testing.py ${1} ${2} ${3} ${4} ${5} ${6}
+python LTC_FullyConnected_Testing.py

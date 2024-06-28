@@ -89,8 +89,16 @@ def LTC_NCP_model_builder(hp):
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
     hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
+    train_steps = reshape // 32
+    decay_lr = hp.Float('decay rate', min_value = .5, max_value = .95, step = .5)
 
-    model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate = hp_learning_rate, clipnorm = hp_clipnorm),
+
+
+    learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        hp_learning_rate, train_steps, decay_lr
+    )
+
+    model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = hp_clipnorm),
                   loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
                   metrics = ['accuracy'])
     
@@ -119,9 +127,10 @@ The hyperparameter search is complete. Optimal values below:
       mixed memory = {best_hps.get('mixed_memory')},
       mode = {best_hps.get('mode')},
       backbone_activation = {best_hps.get('backbone_activation')},
-      backbone_units = {best_hps.get('backbone_units')},
-      backbone_layers = {best_hps.get('backbone_layer')},
-      backbone_dropout = {best_hps.get('backbone_dropout')}
+      learning_rate = {best_hps.get('learning_rate')},
+      decay_rate = {best_hps.get('decay rate')}
+      clipnorm = {best_hps.get('clipnorm')}
+
 
 
 """)
