@@ -76,9 +76,13 @@ def CfC_NCP_model_builder(hp):
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
 
+    backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
+    backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
+    backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
+
     
 
-    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)(input)
+    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True, backbone_units= backbone_units, backbone_layers= backbone_layers, backbone_dropout= backbone_dropout )(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
