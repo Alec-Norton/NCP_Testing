@@ -85,8 +85,9 @@ def CfC_NCP_model_builder(hp):
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01])
+    hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
 
-    model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate = hp_learning_rate),
+    model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate = hp_learning_rate, clipnorm = hp_clipnorm),
                   loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
                   metrics = ['accuracy'])
     
