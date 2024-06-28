@@ -3,7 +3,8 @@
 #SBATCH -n 10
 #SBATCH --mem=5g
 #SBATCH -J "CfC_NCP_Testing - Alec Norton"
-#SBATCH -p long
+#SBATCH -p short
+#SBATCH -t 12:00:00
 #SBATCH --gres=gpu:2
 #SBATCH -C A100|V100
 module load python/3.10.2

@@ -77,19 +77,19 @@ def CfC_NCP_model_builder(hp):
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
 
-    backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
-    backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
-    backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
+    #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
+    #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
+    #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
 
     
 
-    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True, backbone_units= backbone_units, backbone_layers= backbone_layers, backbone_dropout= backbone_dropout )(input)
+    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
     model = tf.keras.Model(inputs = input, outputs = output)
 
-    hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01])
+    hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
     hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
 
     model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate = hp_learning_rate, clipnorm = hp_clipnorm),
@@ -98,10 +98,9 @@ def CfC_NCP_model_builder(hp):
     
     return model
 
-tuner = kt.Hyperband(CfC_NCP_model_builder,
+tuner = kt.BayesianOptimization(CfC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 10,
-                     factor = 3)
+                     max_trials = 100)
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
 
