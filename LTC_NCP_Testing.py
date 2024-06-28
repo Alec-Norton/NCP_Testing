@@ -74,16 +74,14 @@ def LTC_NCP_model_builder(hp):
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
 
     mixed_memory = hp.Boolean('mixed_memory', default = False)
-    mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
-    backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
 
-    backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
-    backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
-    backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
+    #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
+    #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
+    #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
 
     
 
-    x = LTC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True, backbone_units= backbone_units, backbone_layers= backbone_layers, backbone_dropout= backbone_dropout )(input)
+    x = LTC(wiring, mixed_memory = mixed_memory, return_sequences= True)(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -100,7 +98,7 @@ def LTC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 15,
+                     max_epochs = 10,
                      factor = 3)
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
