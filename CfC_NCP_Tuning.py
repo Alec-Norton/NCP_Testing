@@ -70,6 +70,7 @@ def CfC_NCP_model_builder(hp):
     inter_fanout = hp.Int('inter_fanout', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
+
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
 
     mixed_memory = hp.Boolean('mixed_memory', default = False)
@@ -119,7 +120,11 @@ The hyperparameter search is complete. Optimal values below:
       motor_fanin = {best_hps.get('motor_fanin')},
       mixed memory = {best_hps.get('mixed_memory')},
       mode = {best_hps.get('mode')},
-      backbone_activation = {best_hps.get('backbone_activation')}
+      backbone_activation = {best_hps.get('backbone_activation')},
+      backbone_units = {best_hps.get('backbone_units')},
+      backbone_layers = {best_hps.get('backbone_layer')},
+      backbone_dropout = {best_hps.get('backbone_dropout')}
+
 
 """)
 model = tuner.hypermodel.build(best_hps)
