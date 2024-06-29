@@ -62,9 +62,9 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 input = tf.keras.layers.Input(shape = (150, 8))
 
 def CfC_FullyConnected_model_builder(hp):
+
     units = hp.Int('units', min_value = 10, max_value = 100, step = 1)
     
-
     wiring = ncps.wirings.FullyConnected(units = units)
 
     mixed_memory = hp.Boolean('mixed_memory', default = False)
