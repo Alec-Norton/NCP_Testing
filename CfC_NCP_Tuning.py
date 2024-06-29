@@ -100,7 +100,8 @@ def CfC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(CfC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 10)
+                     max_epochs = 10,
+                     factor = 3)
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
