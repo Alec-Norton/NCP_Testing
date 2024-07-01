@@ -104,6 +104,7 @@ tuner = kt.Hyperband(LTC_FullyConnected_model_builder,
                      factor = 3,
                      overwrite = True,
                      directory = '',
+                     distribution_strategy=tf.distribute.MirroredStrategy(),
                      project_name = "LTC_Fully_Connected")
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)

@@ -111,6 +111,7 @@ tuner = kt.Hyperband(CfC_NCP_model_builder,
                      max_epochs = 10,
                      factor = 3,
                      overwrite = True,
+                     distribution_strategy=tf.distribute.MirroredStrategy(),
                      directory = '',
                      project_name = "CfC_NCP_Tuning_Project")
 
