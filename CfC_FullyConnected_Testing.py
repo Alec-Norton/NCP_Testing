@@ -67,7 +67,6 @@ def CfC_FullyConnected_model_builder(hp):
     
     wiring = ncps.wirings.FullyConnected(units = units)
 
-    mixed_memory = hp.Boolean('mixed_memory', default = False)
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
 
@@ -77,7 +76,7 @@ def CfC_FullyConnected_model_builder(hp):
 
     
 
-    x = CfC(wiring, mixed_memory = mixed_memory, mode = mode, activation = backbone_activation, return_sequences= True)(input)
+    x = CfC(wiring, mode = mode, activation = backbone_activation, return_sequences= True)(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -105,7 +104,7 @@ tuner = kt.Hyperband(CfC_FullyConnected_model_builder,
                      max_epochs = 10,
                      factor = 3,
                      overwrite = True, 
-                     directory = '/home/arnorton/NCP_Testing',
+                     directory = '',
                      project_name = "CfC_FullyConnected_Tuning_Project")
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
@@ -115,24 +114,11 @@ tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
-print(f"""
-The hyperparameter search is complete. Optimal values below: 
-      units = {best_hps.get('units')},
-      mixed memory = {best_hps.get('mixed_memory')},
-      mode = {best_hps.get('mode')},
-      backbone_activation = {best_hps.get('backbone_activation')},
-      learning_rate = {best_hps.get('learning_rate')},
-      decay rate = {best_hps.get('decay rate')},
-      clipnorm = {best_hps.get('clipnorm')}
-
-
-""")
 model = tuner.hypermodel.build(best_hps)
 history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
-print('Best epoch: %d' % (best_epoch,))
 
 
 hypermodel = tuner.hypermodel.build(best_hps)
@@ -143,6 +129,19 @@ hypermodel.summary()
 
 # Retrain the model
 hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
+print("CfC_Fully_Connected_Testing")
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      units = {best_hps.get('units')},
+      mode = {best_hps.get('mode')},
+      backbone_activation = {best_hps.get('backbone_activation')},
+      learning_rate = {best_hps.get('learning_rate')},
+      decay rate = {best_hps.get('decay rate')},
+      clipnorm = {best_hps.get('clipnorm')}
+
+
+""")
+print('Best epoch: %d' % (best_epoch,))
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 print("[test loss, test accuracy]:", eval_result)

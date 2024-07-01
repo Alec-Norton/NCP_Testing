@@ -73,7 +73,6 @@ def LTC_NCP_model_builder(hp):
 
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
 
-    mixed_memory = hp.Boolean('mixed_memory', default = False)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -81,7 +80,7 @@ def LTC_NCP_model_builder(hp):
 
     
 
-    x = LTC(wiring, mixed_memory = mixed_memory, return_sequences= True)(input)
+    x = LTC(wiring, return_sequences= True)(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -109,7 +108,7 @@ tuner = kt.Hyperband(LTC_NCP_model_builder,
                      max_epochs = 10,
                      factor = 3,
                      overwrite = True,
-                     directory = '/home/arnorton/NCP_Testing',
+                     directory = '',
                      project_name = "LTC_NCP_Tuning_Project")
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
@@ -119,29 +118,12 @@ tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
-print(f"""
-The hyperparameter search is complete. Optimal values below: 
-      inter neurons = {best_hps.get('inter_neurons')},
-      command neurons = {best_hps.get('command_neurons')},
-      motor neurons = {best_hps.get('motor_neurons')},
-      sensory fanout = {best_hps.get('sensory_fanout')},
-      inter_fanout = {best_hps.get('inter_fanout')},
-      recurrent_command_synapses = {best_hps.get('recurrent_command_synapses')},
-      motor_fanin = {best_hps.get('motor_fanin')},
-      mixed memory = {best_hps.get('mixed_memory')},
-      learning_rate = {best_hps.get('learning_rate')},
-      decay_rate = {best_hps.get('decay rate')}
-      clipnorm = {best_hps.get('clipnorm')}
 
-
-
-""")
 model = tuner.hypermodel.build(best_hps)
 history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
-print('Best epoch: %d' % (best_epoch,))
 
 
 hypermodel = tuner.hypermodel.build(best_hps)
@@ -154,4 +136,22 @@ hypermodel.summary()
 hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
+print("LTC_NCP_Testing")
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      inter neurons = {best_hps.get('inter_neurons')},
+      command neurons = {best_hps.get('command_neurons')},
+      motor neurons = {best_hps.get('motor_neurons')},
+      sensory fanout = {best_hps.get('sensory_fanout')},
+      inter_fanout = {best_hps.get('inter_fanout')},
+      recurrent_command_synapses = {best_hps.get('recurrent_command_synapses')},
+      motor_fanin = {best_hps.get('motor_fanin')},
+      learning_rate = {best_hps.get('learning_rate')},
+      decay_rate = {best_hps.get('decay rate')}
+      clipnorm = {best_hps.get('clipnorm')}
+
+
+
+""")
+print('Best epoch: %d' % (best_epoch,))
 print("[test loss, test accuracy]:", eval_result)

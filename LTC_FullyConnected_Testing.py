@@ -17,7 +17,7 @@ import keras_tuner as kt
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
@@ -68,7 +68,6 @@ def LTC_FullyConnected_model_builder(hp):
 
     wiring = ncps.wirings.FullyConnected(units)
 
-    mixed_memory = hp.Boolean('mixed_memory', default = False)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -76,7 +75,7 @@ def LTC_FullyConnected_model_builder(hp):
 
     
 
-    x = LTC(wiring, mixed_memory = mixed_memory, return_sequences= True)(input)
+    x = LTC(wiring, return_sequences= True)(input)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -104,7 +103,7 @@ tuner = kt.Hyperband(LTC_FullyConnected_model_builder,
                      max_epochs = 10,
                      factor = 3,
                      overwrite = True,
-                     directory = '/home/arnorton/NCP_Testing',
+                     directory = '',
                      project_name = "LTC_Fully_Connected")
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
@@ -114,16 +113,7 @@ tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
-print(f"""
-The hyperparameter search is complete. Optimal values below: 
-      units = {best_hps.get('units')},
-      mixed memory = {best_hps.get('mixed_memory')},
-      backbone_activation = {best_hps.get('backbone_activation')},
-      learning_rate = {best_hps.get('learning_rate')},
-      decay_rate = {best_hps.get('decay rate')},
-      clipnorm = {best_hps.get('clipnorm')}
 
-""")
 model = tuner.hypermodel.build(best_hps)
 history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
 
@@ -142,4 +132,15 @@ hypermodel.summary()
 hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
+print("LTC_Fully_Connected")
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      units = {best_hps.get('units')},
+      backbone_activation = {best_hps.get('backbone_activation')},
+      learning_rate = {best_hps.get('learning_rate')},
+      decay_rate = {best_hps.get('decay rate')},
+      clipnorm = {best_hps.get('clipnorm')}
+
+""")
+print('Best epoch: %d' % (best_epoch,))
 print("[test loss, test accuracy]:", eval_result)
