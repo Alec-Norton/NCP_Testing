@@ -11,7 +11,17 @@ import time
 from sklearn.model_selection import train_test_split
 import keras_tuner as kt
 
+
+class CustomCallback(tf.keras.callbacks.Callback):
+    def on_batch_end(self, batch, logs = None):
+        if(logs["loss"] > 5000):
+            self.model.stop_training = True
+
+
+
 #Actual Execution of Code: 
+
+
 
 #Load Data Here
 
@@ -115,10 +125,11 @@ tuner = kt.Hyperband(CfC_NCP_model_builder,
                      directory = '',
                      project_name = "CfC_NCP_Tuning_Project")
 
-stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
+stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
+stop_early2 = tf.keras.callbacks.EarlyStopping('loss', mode = "min", patience = 5)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1])
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2])
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 

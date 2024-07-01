@@ -36,6 +36,10 @@ from sklearn.model_selection import train_test_split
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 
+class CustomCallback(tf.keras.callbacks.Callback):
+    def on_batch_end(self, batch, logs = None):
+        if(logs["loss"] > 5000):
+            self.model.stop_training = True
 
 keras = tf.keras
 #define a function to return a NCP CfC Model
@@ -55,6 +59,7 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     x = CfC(wiring, return_sequences= True)(input)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
+
     model = tf.keras.Model(inputs = input, outputs = output)
     
     
@@ -72,6 +77,7 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
     #Fit the model and return accuracy
     #Get beginning of time
     callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
+
 
     start = time.process_time()
     hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 2, callbacks = [callback])
