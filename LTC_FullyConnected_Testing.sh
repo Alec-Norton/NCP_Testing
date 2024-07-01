@@ -3,7 +3,7 @@
 #SBATCH -n 10
 #SBATCH --mem=5g
 #SBATCH -J "LTC_FullyConnected - Alec Norton"
-#SBATCH -t 12:00:00
+#SBATCH -p long
 #SBATCH --gres=gpu:2
 #SBATCH -C A100|V100
 module load python/3.10.2
