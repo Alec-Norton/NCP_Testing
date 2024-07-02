@@ -80,8 +80,10 @@ def CfC_FullyConnected_model_builder(hp):
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
 
     
-
-    x = CfC(wiring, mode = mode, activation = backbone_activation, return_sequences= True)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPooling1D(3)(x)
+    x = tf.keras.layers.Dropout(.5)(x)
+    x = CfC(wiring, mode = mode, activation = backbone_activation, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 

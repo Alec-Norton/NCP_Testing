@@ -74,10 +74,10 @@ def LTC_FullyConnected_model_builder(hp):
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
-
-    
-
-    x = LTC(wiring, return_sequences= True)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPooling1D(3)(x)
+    x = tf.keras.layers.Dropout(.5)(x)
+    x = LTC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
