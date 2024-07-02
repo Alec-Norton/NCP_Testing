@@ -165,7 +165,7 @@ The hyperparameter search is complete. Optimal values below:
       backbone_activation = {best_hps.get('backbone_activation')},
       learning_rate = {best_hps.get('learning_rate')},
       clipnorm = {best_hps.get('clipnorm')},
-      decay rate = {best_hps.get('decay_rate')}
+      decay rate = {best_hps.get('decay rate')}
 
 
 
