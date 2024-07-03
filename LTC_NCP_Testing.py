@@ -67,7 +67,7 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 input = tf.keras.layers.Input(shape = (150, 8))
 
 def LTC_NCP_model_builder(hp):
-
+    '''
     inter_neuron = hp.Int('inter_neurons', min_value = 5, max_value = 30, step = 1)
     command_neuron = hp.Int('command_neurons', min_value = 5, max_value = 30, step = 1)
     motor_neuron = hp.Int('motor_neurons', min_value = 4, max_value = 30, step = 1)
@@ -75,9 +75,13 @@ def LTC_NCP_model_builder(hp):
     inter_fanout = hp.Int('inter_fanout', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
-
+    
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
-
+    '''
+    units = hp.Int('units', min_value = 8, max_value = 50, step = 2)
+    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
+    sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
+    wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -90,10 +94,9 @@ def LTC_NCP_model_builder(hp):
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
-    train_steps = reshape // 32
-    decay_lr = hp.Float('decay rate', min_value = .5, max_value = .95, step = .5)
-
+    hp_clipnorm = .1
+    train_steps = reshape // 1024
+    decay_lr = .66
 
 
     learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -108,7 +111,7 @@ def LTC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 5,
+                     max_epochs = 3,
                      factor = 3,
                      overwrite = True,
                      directory = '',
@@ -119,14 +122,15 @@ stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
 stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
 
+print("Begin searching")
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 0)
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = 1024)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 0)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1028)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -138,12 +142,13 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 0)
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1028)
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 
 hypermodel.summary()
 
+''''
 print("LTC_NCP_Testing")
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
@@ -159,5 +164,20 @@ The hyperparameter search is complete. Optimal values below:
 
 
 """)
+
+'''
+
+print("LTC_NCP_Testing")
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      units = {best_hps.get('units')},
+      output_size = {best_hps.get('output_size')},
+      sparsity = {best_hps.get('sparsity_level')}
+      learning_rate = {best_hps.get('learning_rate')},
+
+
+
+""")
+
 print('Best epoch: %d' % (best_epoch,))
 print("[test loss, test accuracy]:", eval_result)
