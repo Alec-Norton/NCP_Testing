@@ -56,7 +56,7 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
         ]
     )'''
     x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = CfC(wiring, return_sequences= True)(x)
+    x = LTC(wiring, return_sequences= True)(x)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -117,7 +117,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -192,7 +192,7 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
     )
 
 
-cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn ,clipnorm = clipnorm)
+cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
 cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
@@ -202,6 +202,7 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
+print("LTC_NCP Training")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
