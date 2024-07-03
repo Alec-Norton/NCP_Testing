@@ -75,8 +75,6 @@ def LTC_FullyConnected_model_builder(hp):
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
     x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPooling1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
     x = LTC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
@@ -84,9 +82,9 @@ def LTC_FullyConnected_model_builder(hp):
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    hp_clipnorm = hp.Float('clipnorm', min_value = .25, max_value = 5, step = .25)
+    hp_clipnorm = .1
     train_steps = reshape // 32
-    decay_lr = hp.Float('decay rate', min_value = .5, max_value = .95, step = .5)
+    decay_lr = .66
 
 
 
@@ -102,7 +100,7 @@ def LTC_FullyConnected_model_builder(hp):
 
 tuner = kt.Hyperband(LTC_FullyConnected_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 10,
+                     max_epochs = 5,
                      factor = 3,
                      overwrite = True,
                      directory = '',
@@ -114,13 +112,13 @@ stop_early1 = tf.keras.callbacks.TerminateOnNaN()
 stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
 
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2])
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 0)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 0)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -129,22 +127,20 @@ print('Best epoch: %d' % (best_epoch,))
 
 hypermodel = tuner.hypermodel.build(best_hps)
 
-hypermodel.summary()
 
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 0)
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
+hypermodel.summary()
+
 print("LTC_Fully_Connected")
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
       units = {best_hps.get('units')},
-      backbone_activation = {best_hps.get('backbone_activation')},
       learning_rate = {best_hps.get('learning_rate')},
-      decay_rate = {best_hps.get('decay rate')},
-      clipnorm = {best_hps.get('clipnorm')}
 
 """)
 print('Best epoch: %d' % (best_epoch,))

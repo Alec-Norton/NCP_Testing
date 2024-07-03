@@ -55,8 +55,8 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
             tf.keras.layers.Dense(1)
         ]
     )'''
-
-    x = CfC(wiring, return_sequences= True)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = CfC(wiring, return_sequences= True)(x)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -77,10 +77,12 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
     #Fit the model and return accuracy
     #Get beginning of time
     callback = tf.keras.callbacks.EarlyStopping(monitor = 'loss', patience = 3)
+    #callback1 = CustomCallback()
+    callback2 = tf.keras.callbacks.TerminateOnNaN()
 
 
     start = time.process_time()
-    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 2, callbacks = [callback])
+    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 1, callbacks = [callback, callback2])
     end = time.process_time()
     test_accuracies = hist.history["val_sparse_categorical_accuracy"]
     print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
@@ -116,7 +118,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
 #TODO: Load a Time-Series Application
 
 csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
-
+#csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
 for csv_file in csv_files:
@@ -180,7 +182,7 @@ epochs = int(args.epochs)
 
 base_lr = float(args.base_lr)
 train_steps = reshape // batch_size
-decay_lr = .95
+decay_lr = .66
 clipnorm = float(args.clipnorm)
 
 
