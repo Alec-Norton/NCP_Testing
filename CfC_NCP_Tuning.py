@@ -157,6 +157,7 @@ eval_result = hypermodel.evaluate(x_valid, y_valid)
 hypermodel.summary()
 
 print("CfC_NCP ")
+'''
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
       inter neurons = {best_hps.get('inter_neurons')},
@@ -173,6 +174,20 @@ The hyperparameter search is complete. Optimal values below:
 
 
 """)
+'''
+print(f"""
+The hyperparameter search is complete. Optimal values below: 
+      units = {best_hps.get('units')},
+      output_size = {best_hps.get('output_size')},
+      sparsity = {best_hps.get('sparsity_level')},
+      mode = {best_hps.get('mode')},
+      backbone_activation  = {best_hps.get('backbone_activation')}
+      learning_rate = {best_hps.get('learning_rate')},
+
+
+
+""")
 print('Best epoch: %d' % (best_epoch,))
+print("Batch Size: " + str(batch_size))
 
 print("[test loss, test accuracy]:", eval_result)
