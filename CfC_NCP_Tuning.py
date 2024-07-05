@@ -67,12 +67,12 @@ y_train = y_train.astype(np.int8)
 
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-
+batch_size = 512
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
 def CfC_NCP_model_builder(hp):
-
+    '''
     inter_neuron = hp.Int('inter_neurons', min_value = 5, max_value = 30, step = 1)
     command_neuron = hp.Int('command_neurons', min_value = 5, max_value = 30, step = 1)
     motor_neuron = hp.Int('motor_neurons', min_value = 4, max_value = 30, step = 1)
@@ -80,8 +80,11 @@ def CfC_NCP_model_builder(hp):
     inter_fanout = hp.Int('inter_fanout', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
-
-    wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
+    '''
+    units = hp.Int('units', min_value = 8, max_value = 100, step = 2)
+    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
+    sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
+    wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
 
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
@@ -100,7 +103,7 @@ def CfC_NCP_model_builder(hp):
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
     clipnorm = .1
-    train_steps = reshape // 32
+    train_steps = reshape // batch_size
     decay_lr = .66
 
 
@@ -129,13 +132,13 @@ stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
 stop_early2 = tf.keras.callbacks.EarlyStopping('loss', mode = "min", patience = 5)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 0)
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 0, batch_size = batch_size)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 0)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 0, batch_size = batch_size)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -147,8 +150,7 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 0)
-
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 0, batch_size = batch_size)
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 
 hypermodel.summary()
