@@ -95,6 +95,7 @@ def CfC_NCP_model_builder(hp):
 
     
     x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
     x = CfC(wiring, mode = mode, activation = backbone_activation, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
