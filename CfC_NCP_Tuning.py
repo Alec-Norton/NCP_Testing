@@ -67,7 +67,7 @@ y_train = y_train.astype(np.int8)
 
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-batch_size = 512
+batch_size = 32
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
@@ -88,6 +88,8 @@ def CfC_NCP_model_builder(hp):
 
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
+
+    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -133,13 +135,13 @@ stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
 stop_early2 = tf.keras.callbacks.EarlyStopping('loss', mode = "min", patience = 5)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 0, batch_size = batch_size)
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 0, batch_size = batch_size)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 1, batch_size = batch_size)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -151,7 +153,7 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 0, batch_size = batch_size)
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 1, batch_size = batch_size)
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 
 hypermodel.summary()
@@ -183,11 +185,11 @@ The hyperparameter search is complete. Optimal values below:
       mode = {best_hps.get('mode')},
       backbone_activation  = {best_hps.get('backbone_activation')}
       learning_rate = {best_hps.get('learning_rate')},
+      batch_size = {best_hps.get('batch_size')}
 
 
 
 """)
 print('Best epoch: %d' % (best_epoch,))
-print("Batch Size: " + str(batch_size))
 
 print("[test loss, test accuracy]:", eval_result)

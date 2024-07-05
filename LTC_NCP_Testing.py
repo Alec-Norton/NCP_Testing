@@ -30,8 +30,7 @@ for csv_file in csv_files:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
 
-batch_size = 512
-
+batch_size = 32
 
 #csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
 #x_train = csv_file.copy()
@@ -86,6 +85,8 @@ def LTC_NCP_model_builder(hp):
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
+
+    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = LTC(wiring, return_sequences= True)(x)
@@ -175,10 +176,12 @@ The hyperparameter search is complete. Optimal values below:
       output_size = {best_hps.get('output_size')},
       sparsity = {best_hps.get('sparsity_level')}
       learning_rate = {best_hps.get('learning_rate')},
+      batch_size = {best_hps.get('batch_size')}
 
 
 
 """)
 
 print('Best epoch: %d' % (best_epoch,))
+print("Batch Size: " + str(batch_size))
 print("[test loss, test accuracy]:", eval_result)
