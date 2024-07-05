@@ -78,7 +78,7 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    units = hp.Int('units', min_value = 8, max_value = 50, step = 2)
+    units = hp.Int('units', min_value = 8, max_value = 100, step = 2)
     output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
@@ -130,7 +130,7 @@ best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1028)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1024)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -142,7 +142,7 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1028)
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 1, batch_size = 1024)
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 
