@@ -56,6 +56,7 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
         ]
     )'''
     x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
     x = LTC(wiring, return_sequences= True)(x)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
