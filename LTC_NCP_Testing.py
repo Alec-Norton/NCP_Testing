@@ -77,8 +77,8 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
-    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
+    units = hp.Int('units', min_value = 50, max_value = 100, step = 5)
+    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 5)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     
     wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
@@ -89,8 +89,6 @@ def LTC_NCP_model_builder(hp):
 
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)   
-    
-
     x = LTC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
@@ -126,7 +124,7 @@ stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", p
 
 print("Begin searching")
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
+tuner.search(x_train, y_train, epochs = 5, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
