@@ -96,9 +96,7 @@ def LTC_NCP_model_builder(hp):
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    
     
 
     x = LTC(wiring, return_sequences= True)(x)
