@@ -171,9 +171,9 @@ The hyperparameter search is complete. Optimal values below:
 print("LTC_NCP_Testing")
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
-      units = {best_hps.get('units')},
-      output_size = {best_hps.get('output_size')},
-      sparsity_level = {best_hps.get('sparsity_level')}
+      learning_rate = {best_hps.get('learning_rate')},
+      clipnorm = {best_hps.get('clipnorm')},
+      decay_lr = {best_hps.get('decay_lr')}
 
 
 
