@@ -67,7 +67,7 @@ y_train = y_train.astype(np.int8)
 
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-batch_size = 32
+batch_size = 512
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
@@ -81,7 +81,7 @@ def CfC_NCP_model_builder(hp):
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     '''
-    units = hp.Int('units', min_value = 8, max_value = 100, step = 2)
+    units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
     output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
@@ -89,7 +89,7 @@ def CfC_NCP_model_builder(hp):
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
 
-    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
+    #batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -186,7 +186,6 @@ The hyperparameter search is complete. Optimal values below:
       mode = {best_hps.get('mode')},
       backbone_activation  = {best_hps.get('backbone_activation')}
       learning_rate = {best_hps.get('learning_rate')},
-      batch_size = {best_hps.get('batch_size')}
 
 
 
