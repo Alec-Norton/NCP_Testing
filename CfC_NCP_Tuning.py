@@ -81,6 +81,7 @@ def CfC_NCP_model_builder(hp):
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     '''
+    '''
     units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
     output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
@@ -88,27 +89,27 @@ def CfC_NCP_model_builder(hp):
 
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
-
-    #batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
+    '''
+    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
-
+    wiring = ncps.wirings.AutoNCP(units = 70, output_size = 5, sparsity_level = .3)
     
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
-    x = CfC(wiring, mode = mode, activation = backbone_activation, return_sequences= True)(x)
+    x = CfC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    clipnorm = .1
+    clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
+
     train_steps = reshape // batch_size
-    decay_lr = .66
+    decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
 
 
 
@@ -124,7 +125,7 @@ def CfC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(CfC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 5,
+                     max_epochs = 10,
                      factor = 3,
                      overwrite = True,
                      distribution_strategy=tf.distribute.MirroredStrategy(),

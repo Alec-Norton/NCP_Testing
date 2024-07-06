@@ -22,7 +22,7 @@ class CustomCallback(tf.keras.callbacks.Callback):
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
@@ -77,19 +77,19 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
-    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
-    sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
-    wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
+    #units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
+    #output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
+    #sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
+    
+    wiring = ncps.wirings.AutoNCP(units = 70, output_size = 5, sparsity_level = .3)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
 
-    #batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
+    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
 
     x = LTC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
@@ -98,9 +98,9 @@ def LTC_NCP_model_builder(hp):
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    hp_clipnorm = .1
+    hp_clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
     train_steps = reshape // batch_size
-    decay_lr = .66
+    decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
 
 
     learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -115,7 +115,7 @@ def LTC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 3,
+                     max_epochs = 10,
                      factor = 3,
                      overwrite = True,
                      directory = '',
@@ -174,15 +174,15 @@ The hyperparameter search is complete. Optimal values below:
 print("LTC_NCP_Testing")
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
-      units = {best_hps.get('units')},
-      output_size = {best_hps.get('output_size')},
-      sparsity = {best_hps.get('sparsity_level')}
       learning_rate = {best_hps.get('learning_rate')},
+      clipnorm = {best_hps.get('clipnorm')},
+      decay_lr = {best_hps.get('decay_lr')},
+      batch_size = {best_hps.get('batch_size')}
+
 
 
 
 """)
 
 print('Best epoch: %d' % (best_epoch,))
-print("Batch Size: " + str(batch_size))
 print("[test loss, test accuracy]:", eval_result)
