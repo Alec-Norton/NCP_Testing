@@ -121,7 +121,7 @@ def LTC_NCP_model_builder(hp):
     
     return model
 
-tuner = kt.Hyperband(LTC_NCP_model_builder,
+tuner = kt.GridSearch(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
                      max_epochs = 10,
                      factor = 3,
