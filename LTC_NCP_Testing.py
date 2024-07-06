@@ -30,7 +30,7 @@ for csv_file in csv_files:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
 
-batch_size = 128
+batch_size = 224
 
 #csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
 #x_train = csv_file.copy()
@@ -98,9 +98,9 @@ def LTC_NCP_model_builder(hp):
     model = tf.keras.Model(inputs = input, outputs = output)
 
     hp_learning_rate = .02
-    hp_clipnorm = .1
+    hp_clipnorm = .999999
     train_steps = reshape // batch_size
-    decay_lr = .66
+    decay_lr = .5
 
 
     learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -115,8 +115,6 @@ def LTC_NCP_model_builder(hp):
 
 tuner = kt.GridSearch(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 10,
-                     factor = 3,
                      overwrite = True,
                      directory = '',
                      distribution_strategy=tf.distribute.MirroredStrategy(),
