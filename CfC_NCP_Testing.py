@@ -111,6 +111,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     results = model.evaluate(x_valid, y_valid, batch_size = 32)
     print("test loss, test acc:", results)
 
+    model.summary()
     
 
 
