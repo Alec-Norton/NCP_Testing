@@ -87,7 +87,7 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
     end = time.process_time()
     test_accuracies = hist.history["val_sparse_categorical_accuracy"]
     print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
-    return np.max(test_accuracies), end-start
+    return np.max(test_accuracies), end-start, model
 
 #Based on the model_number, create a model and train on specified optimizer, loss_function, validation_split, batch_size, and some epochs
 #Then return the mean and standard deviation of the accuracy of these models. 
@@ -96,7 +96,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     dur = []
     for i in range(model_number):
         print("Model: " + str(i))
-        max_accuracy, time = eval(model, i, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs)
+        max_accuracy, time, model = eval(model, i, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs)
         dur.append(time)
         acc.append(100 * max_accuracy)
     acc_average = np.mean(acc)
@@ -107,6 +107,11 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     print("Average Test Accuracy: " + str(acc_average) + " Standard Deviation Test Accuracy: " + str(acc_std))
     print("Average Time Training: " + str(dur_average) + " Standard Deviation Time: " + str(dur_std))
     print("-------------------------------------------------------------------")
+
+    results = model.evaluate(x_valid, y_valid, batch_size = 32)
+    print("test loss, test acc:", results)
+
+    
 
 
     #print(f"Test Accuracy: {np.mean(acc):(1/model_number)}\\% $\\pm$ {np.std(acc):(1/model_number)}")

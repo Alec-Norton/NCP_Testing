@@ -89,6 +89,10 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     print("Average Time Training: " + str(dur_average) + " Standard Deviation Time: " + str(dur_std))
     print("-------------------------------------------------------------------")
 
+    results = model.evaluate(x_valid, y_valid, batch_size=32)
+    print("test loss, test acc:", results)
+
+
 
 #Actual Execution of Code: 
 
