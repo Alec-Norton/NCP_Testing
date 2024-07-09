@@ -2,7 +2,7 @@
 #SBATCH -N 1
 #SBATCH -n 10
 #SBATCH --mem=5g
-#SBATCH -J "CNN_Save_model - Alec Norton"
+#SBATCH -J "LTC_Save_model - Alec Norton"
 #SBATCH -t 12:00:00
 #SBATCH --gres=gpu:2
 #SBATCH -C A100|V100
