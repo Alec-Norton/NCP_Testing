@@ -18,7 +18,8 @@ import sys
 import argparse
 
 keras = tf.keras
-
+print("\n")
+print("Loading Models: ")
 CNN_model = keras.models.load_model('CNN_Model.keras')
 LTC_NCP_model = keras.models.load_model('LTC_NCP_Model.keras')
 
@@ -60,10 +61,20 @@ for i in range(0, reshape - 1):
 y_train = array
 y_train = y_train.astype(np.int8)
 
+
+
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 noise_x = []
 CNN_accuracy = []
 LTC_NCP_accuracy = []
+
+print("Noise_Testing: ")
+
+noise_x.append(0)
+CNN_results = CNN_model.evaluate(x_valid, y_valid, verbose = 1)
+LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 1)
+CNN_accuracy.append(CNN_results[1])
+LTC_NCP_accuracy.append(LTC_NCP_results[1])
 
 for i in range(0, .5, .01):
     noise_copy = x_valid + np.random.normal(0, i, x_valid.shape)
