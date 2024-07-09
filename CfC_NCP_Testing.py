@@ -68,7 +68,7 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     return model
 
 
-def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs):
+def eval(model, index_arg, train_x, train_y, opt, loss_fun, batch_size, epochs):
     #Compile the Model
     model.compile(optimizer = opt, loss = loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
@@ -83,7 +83,7 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
 
 
     start = time.process_time()
-    hist = model.fit(x = train_x, y = train_y, validation_data = (x_valid, y_valid), batch_size = batch_size, epochs = epochs, verbose = 1, callbacks = [callback, callback2])
+    hist = model.fit(x = train_x, y = train_y, validation_split = .33, batch_size = batch_size, epochs = epochs, verbose = 1, callbacks = [callback, callback2])
     end = time.process_time()
     test_accuracies = hist.history["val_sparse_categorical_accuracy"]
     print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
@@ -91,12 +91,12 @@ def eval(model, index_arg, train_x, train_y, x_valid, y_valid, opt, loss_fun, ba
 
 #Based on the model_number, create a model and train on specified optimizer, loss_function, validation_split, batch_size, and some epochs
 #Then return the mean and standard deviation of the accuracy of these models. 
-def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number, batch_size, epochs):
+def score(model, train_x, train_y, X_test, y_test, opt, loss_fun, model_number, batch_size, epochs):
     acc = []
     dur = []
     for i in range(model_number):
         print("Model: " + str(i))
-        max_accuracy, time, model = eval(model, i, train_x, train_y, x_valid, y_valid, opt, loss_fun, batch_size, epochs)
+        max_accuracy, time, model = eval(model, i, train_x, train_y, opt, loss_fun, batch_size, epochs)
         dur.append(time)
         acc.append(100 * max_accuracy)
     acc_average = np.mean(acc)
@@ -108,7 +108,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
     print("Average Time Training: " + str(dur_average) + " Standard Deviation Time: " + str(dur_std))
     print("-------------------------------------------------------------------")
 
-    results = model.evaluate(x_valid, y_valid, batch_size = 32)
+    results = model.evaluate(x_test, y_test, batch_size = 32)
     print("test loss, test acc:", results)
 
     model.summary()
@@ -124,7 +124,7 @@ def score(model, train_x, train_y, x_valid, y_valid, opt, loss_fun, model_number
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -172,7 +172,10 @@ for i in range(0, reshape - 1):
 y_train = array
 y_train = y_train.astype(np.int8)
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+
+
+
 
 
 
@@ -207,7 +210,7 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
 
-score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
+score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
 print("LTC_NCP Training")
 print("\n")
