@@ -19,4 +19,4 @@ pip install matplotlib
 
 module load cuda12.2
 
-python LTC_NCP_Save_Model.py
+python Noise_Test.py
