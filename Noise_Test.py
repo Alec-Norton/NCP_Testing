@@ -89,6 +89,8 @@ for i in range(0, .5, .01):
 plt.plot(noise_x, CNN_accuracy, label = "CNN", linestyle = ":")
 plt.plot(noise_x, LTC_NCP_accuracy, label = "LTC_NCP", linestyle = ":")
 
+plt.show()
+
 
 
 
