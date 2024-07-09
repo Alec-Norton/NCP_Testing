@@ -65,7 +65,7 @@ noise_x = []
 CNN_accuracy = []
 LTC_NCP_accuracy = []
 
-for i in range(0, 2, .1):
+for i in range(0, .5, .01):
     noise_copy = x_valid + np.random.normal(0, i, x_valid.shape)
     CNN_results = CNN_model.evaluate(x_valid, y_valid, verbose = 0)
     LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 0)
