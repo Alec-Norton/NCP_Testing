@@ -43,7 +43,7 @@ def CNN(input):
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()

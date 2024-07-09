@@ -47,7 +47,7 @@ def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts\*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
