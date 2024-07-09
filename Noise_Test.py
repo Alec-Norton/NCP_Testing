@@ -18,12 +18,34 @@ import sys
 import argparse
 
 keras = tf.keras
-print("\n")
-print("Loading Models: ")
-CNN_model = keras.models.load_model('CNN_Model/saved_model' )
-LTC_NCP_model = keras.models.load_model('LTC_NCP_Model/saved_model', custom_objects = {"LTC": LTC})
+
+def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
+    #Set up architecture for Neural Circuit Policy
+    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size, ncp_sparsity_level)
+    #Begin constructing layer, starting with input
+    
+    '''model = tf.keras.models.Sequential(
+        [
+            keras.layers.InputLayer(input_shape = (None, 8)),
+            CfC(wiring),
+            tf.keras.layers.Dense(1)
+        ]
+    )'''
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
+    x = LTC(wiring, return_sequences= True)(x)
+    x = keras.layers.Flatten()(x)
+    output = tf.keras.layers.Dense(4)(x)
+
+    model = tf.keras.Model(inputs = input, outputs = output)
+    
+    
+    #Return model
+    return model
+
 
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+
 
 
 x_train = pd.DataFrame()
@@ -58,8 +80,18 @@ array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
 
+
 y_train = array
 y_train = y_train.astype(np.int8)
+
+input = tf.keras.layers.Input(shape = (150, 8))
+
+
+LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
+print("\n")
+print("Loading Models: ")
+CNN_model = keras.models.load_model('CNN_Model/saved_model' )
+LTC_NCP_model.load_weights('LTC_NCP_Model/saved_model.weights.h5')
 
 
 

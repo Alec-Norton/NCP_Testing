@@ -116,6 +116,7 @@ results = model.evaluate(x_test, y_test, batch_size = 32)
 print("test loss, test acc:", results)
 
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
-model.save('LTC_NCP_Model/saved_model')
+
+model.save_weights('LTC_NCP_Model/saved_model.weights.h5')
 
 print("Saved LTC_NCP_Model")
