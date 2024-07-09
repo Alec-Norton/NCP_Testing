@@ -93,7 +93,23 @@ input = tf.keras.layers.Input(shape = (150, 8))
 
 model = LTC_NCP(input, 100, 5, .2)
 
-hist = model.fit(x = x_train, y = y_train, validation_data = (x_valid, y_valid), batch_size = 32, epochs = 17, verbose =1)
+base_lr = .02
+train_steps = reshape // 64
+decay_lr = .66
+clipnorm = .9999
+
+learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        base_lr, train_steps, decay_lr
+    )
+
+
+cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
+hist = model.fit(x = x_train, y = y_train, validation_data = (x_valid, y_valid), batch_size = 64, epochs = 17, verbose =1)
 test_accuracies = hist.history["val_sparse_categorical_accuracy"]
 
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))

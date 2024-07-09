@@ -89,6 +89,11 @@ input = tf.keras.layers.Input(shape = (150, 8))
 
 model = CNN(input)
 
+cnn_optimizer = tf.keras.optimizers.Adam()
+
+cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
 hist = model.fit(x = x_train, y = y_train, validation_data = (x_valid, y_valid), batch_size = 32, epochs = 17, verbose =1)
 test_accuracies = hist.history["val_sparse_categorical_accuracy"]
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
