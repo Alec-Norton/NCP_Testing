@@ -21,7 +21,7 @@ keras = tf.keras
 print("\n")
 print("Loading Models: ")
 CNN_model = keras.models.load_model('CNN_Model/saved_model' )
-LTC_NCP_model = keras.models.load_model('LTC_NCP_Model/saved_model', custom_objects = {'LTC' : LTC})
+LTC_NCP_model = keras.models.load_model('LTC_NCP_Model/saved_model')
 
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
