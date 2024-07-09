@@ -20,8 +20,8 @@ import argparse
 keras = tf.keras
 print("\n")
 print("Loading Models: ")
-CNN_model = keras.models.load_model('/home/arnorton/NCP_Testing/CNN_Model.keras')
-LTC_NCP_model = keras.models.load_model('/home/arnorton/NCP_Testing/LTC_NCP_Model.keras')
+CNN_model = keras.models.load_model('CNN_Model/saved_model')
+LTC_NCP_model = keras.models.load_model('LTC_NCP_Model/saved_model')
 
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 

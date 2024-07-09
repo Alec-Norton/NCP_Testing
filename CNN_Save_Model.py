@@ -97,6 +97,6 @@ model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras
 hist = model.fit(x = x_train, y = y_train, validation_data = (x_valid, y_valid), batch_size = 32, epochs = 17, verbose =1)
 test_accuracies = hist.history["val_sparse_categorical_accuracy"]
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
-model.save('CNN_Model.keras')
+model.save('CNN_Model/saved_model')
 
 print("Saved CNN_Model")
