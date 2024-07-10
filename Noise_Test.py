@@ -158,7 +158,7 @@ print("LTC_NCP accuracy")
 for i in range(0, 50, 1):
     print(LTC_NCP_accuracy[i])
 
-print("Finished, did salt and pepper noise")
+print("Finished, did gaussian noise")
 
 
 
