@@ -151,14 +151,14 @@ for i in range(0, 100, 1):
 
 #plt.show(block = True)
 print("CNN accuracy: ")
-for i in range(0, 50, 1):
+for i in range(0, 100, 1):
     print(CNN_accuracy[i])
 
 print("LTC_NCP accuracy")
-for i in range(0, 50, 1):
+for i in range(0, 100, 1):
     print(LTC_NCP_accuracy[i])
 
-print("Finished, did gaussian noise")
+print("Finished, did guassian noise")
 
 
 
