@@ -45,7 +45,7 @@ keras = tf.keras
 #define a function to return a NCP CfC Model
 def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Set up architecture for Neural Circuit Policy
-    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size, ncp_sparsity_level)
+    wiring = ncps.wirings.FullyConnected(ncp_size, ncp_output_size)
     #Begin constructing layer, starting with input
     
     '''model = tf.keras.models.Sequential(
@@ -212,7 +212,7 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
-print("LTC_NCP Training")
+print("LTC_FullyConnected Training")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
