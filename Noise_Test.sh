@@ -19,4 +19,4 @@ pip install matplotlib
 
 module load cuda12.2
 
-python Graph_Test.py
+python Noise_Test.py

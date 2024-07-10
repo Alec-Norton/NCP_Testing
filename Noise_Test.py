@@ -134,19 +134,29 @@ for i in range(0, 50, 1):
     noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
     CNN_results = CNN_model.evaluate(noise_copy, y_valid, verbose = 1)
     LTC_NCP_results = LTC_NCP_model.evaluate(noise_copy, y_valid, verbose = 1)
-    print("Noise: " + str(float(float(i)/100)))
-    print("CNN_accuracy: " + str(CNN_results[1]))
-    print("LTC_NCP accuracy: " + str(LTC_NCP_results[1]))
+    #print("Noise: " + str(float(float(i)/100)))
+    #print("CNN_accuracy: " + str(CNN_results[1]))
+    #print("LTC_NCP accuracy: " + str(LTC_NCP_results[1]))
     noise_x.append(float(float(i) / 100))
     CNN_accuracy.append(CNN_results[1])
     LTC_NCP_accuracy.append(LTC_NCP_results[1])
 
 
 
-plt.plot(noise_x, CNN_accuracy, label = "CNN", linestyle = ":")
-plt.plot(noise_x, LTC_NCP_accuracy, label = "LTC_NCP", linestyle = ":")
+#plt.plot(noise_x, CNN_accuracy, label = "CNN", linestyle = ":")
+#plt.plot(noise_x, LTC_NCP_accuracy, label = "LTC_NCP", linestyle = ":")
 
-plt.show(block = True)
+#plt.show(block = True)
+print("CNN accuracy: ")
+for i in range(0, 50, 1):
+    print(CNN_accuracy[i])
+
+print("LTC_NCP accuracy")
+for i in range(0, 50, 1):
+    print(LTC_NCP_accuracy[i])
+
+print("Finished")
+
 
 
 
