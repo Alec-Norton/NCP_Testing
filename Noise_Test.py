@@ -70,7 +70,6 @@ reshape = int(x_train.shape[0]/150)
 print(reshape)
 x_train = x_train.reshape(reshape, 150, 8)
 
-x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
@@ -147,7 +146,7 @@ for i in range(0, 50, 1):
 plt.plot(noise_x, CNN_accuracy, label = "CNN", linestyle = ":")
 plt.plot(noise_x, LTC_NCP_accuracy, label = "LTC_NCP", linestyle = ":")
 
-plt.show()
+plt.show(block = True)
 
 
 
