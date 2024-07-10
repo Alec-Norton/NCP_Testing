@@ -115,7 +115,7 @@ cnn_optimizer = tf.keras.optimizers.Adam()
 cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .66, shuffle = True)
 noise_x = []
 CNN_accuracy = []
 LTC_NCP_accuracy = []
@@ -132,6 +132,7 @@ print("Begin iterative noise testing: ")
 
 for i in range(0, 50, 1):
     noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
+    
     noise_copy = (noise_copy - np.mean(noise_copy, axis = 0)) / np.std(noise_copy, axis = 0)
 
     CNN_results = CNN_model.evaluate(noise_copy, y_valid, verbose = 1)
