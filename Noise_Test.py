@@ -43,6 +43,30 @@ def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Return model
     return model
 
+def LTC_FullyConnected(input, ncp_size, ncp_output_size, ncp_sparsity_level):
+    #Set up architecture for Neural Circuit Policy
+    wiring = ncps.wirings.FullyConnected(ncp_size, ncp_output_size)
+    #Begin constructing layer, starting with input
+    
+    '''model = tf.keras.models.Sequential(
+        [
+            keras.layers.InputLayer(input_shape = (None, 8)),
+            CfC(wiring),
+            tf.keras.layers.Dense(1)
+        ]
+    )'''
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
+    x = LTC(wiring, return_sequences= True)(x)
+    x = keras.layers.Flatten()(x)
+    output = tf.keras.layers.Dense(4)(x)
+
+    model = tf.keras.Model(inputs = input, outputs = output)
+    
+    
+    #Return model
+    return model
+
 
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
 
@@ -87,10 +111,12 @@ input = tf.keras.layers.Input(shape = (150, 8))
 
 
 LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
+LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
 print("\n")
 print("Loading Models: ")
 CNN_model = keras.models.load_model('CNN_Model/saved_model' )
 LTC_NCP_model.load_weights('LTC_NCP_Model/saved_model.weights.h5')
+LTC_FullyConnected_model.load_weights('LTC_FullyConnected_Model/saved_model.weights.h5')
 
 
 
@@ -119,6 +145,7 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 noise_x = []
 CNN_accuracy = []
 LTC_NCP_accuracy = []
+LTC_FC_accuracy = []
 
 print("Noise_Testing: ")
 
@@ -137,12 +164,16 @@ for i in range(0, 100, 1):
 
     CNN_results = CNN_model.evaluate(noise_copy, y_valid, verbose = 1)
     LTC_NCP_results = LTC_NCP_model.evaluate(noise_copy, y_valid, verbose = 1)
+    LTC_FC_results = LTC_FullyConnected_model.evaluate(noise_copy, y_valid, verbose = 1)
     #print("Noise: " + str(float(float(i)/100)))
     #print("CNN_accuracy: " + str(CNN_results[1]))
     #print("LTC_NCP accuracy: " + str(LTC_NCP_results[1]))
     noise_x.append(float(float(i) / 100))
     CNN_accuracy.append(CNN_results[1])
     LTC_NCP_accuracy.append(LTC_NCP_results[1])
+    LTC_FC_accuracy.append(LTC_FC_results[1])
+
+    
 
 
 
@@ -158,7 +189,11 @@ print("LTC_NCP accuracy")
 for i in range(0, 100, 1):
     print(LTC_NCP_accuracy[i])
 
-print("Finished, did guassian noise")
+print("LTC_FC_accuracy")
+for i in range(0, 100, 1):
+    print(LTC_FC_accuracy[i])
+
+print("Finished, did guassian")
 
 
 

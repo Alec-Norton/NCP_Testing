@@ -45,7 +45,7 @@ keras = tf.keras
 #define a function to return a NCP CfC Model
 def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Set up architecture for Neural Circuit Policy
-    wiring = ncps.wirings.FullyConnected(ncp_size, ncp_output_size)
+    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size)
     #Begin constructing layer, starting with input
     
     '''model = tf.keras.models.Sequential(
