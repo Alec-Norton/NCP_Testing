@@ -132,7 +132,7 @@ LTC_NCP_accuracy.append(LTC_NCP_results[1])
 print("Begin iterative noise testing: ")
 
 for i in range(0, 50, 1):
-    noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
+    noise_copy = x_valid + np.random.normal(10, float(float(i) / 100), x_valid.shape)
     CNN_results = CNN_model.evaluate(x_valid, y_valid, verbose = 1)
     LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 1)
     print("Noise: " + str(float(float(i)/100)))
