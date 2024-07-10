@@ -132,6 +132,8 @@ print("Begin iterative noise testing: ")
 
 for i in range(0, 50, 1):
     noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
+    noise_copy = (noise_copy - np.mean(noise_copy, axis = 0)) / np.std(noise_copy, axis = 0)
+
     CNN_results = CNN_model.evaluate(noise_copy, y_valid, verbose = 1)
     LTC_NCP_results = LTC_NCP_model.evaluate(noise_copy, y_valid, verbose = 1)
     #print("Noise: " + str(float(float(i)/100)))
