@@ -130,7 +130,7 @@ LTC_NCP_accuracy.append(LTC_NCP_results[1])
 
 print("Begin iterative noise testing: ")
 
-for i in range(0, 50, 1):
+for i in range(0, 100, 1):
     noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
     
     noise_copy = (noise_copy - np.mean(noise_copy, axis = 0)) / np.std(noise_copy, axis = 0)
@@ -158,7 +158,7 @@ print("LTC_NCP accuracy")
 for i in range(0, 50, 1):
     print(LTC_NCP_accuracy[i])
 
-print("Finished")
+print("Finished, did salt and pepper noise")
 
 
 
