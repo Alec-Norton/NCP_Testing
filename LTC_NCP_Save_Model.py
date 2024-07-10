@@ -21,7 +21,7 @@ keras = tf.keras
 
 def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Set up architecture for Neural Circuit Policy
-    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size, ncp_sparsity_level)
+    wiring = ncps.wirings.FullyConnected(ncp_size, ncp_output_size)
     #Begin constructing layer, starting with input
     
     '''model = tf.keras.models.Sequential(
@@ -120,3 +120,4 @@ print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
 model.save_weights('LTC_NCP_Model/saved_model.weights.h5')
 
 print("Saved LTC_NCP_Model")
+model.summary()
