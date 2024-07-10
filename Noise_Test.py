@@ -95,6 +95,27 @@ LTC_NCP_model.load_weights('LTC_NCP_Model/saved_model.weights.h5')
 
 
 
+base_lr = .02
+train_steps = reshape // 64
+decay_lr = .66
+clipnorm = .9999
+
+learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        base_lr, train_steps, decay_lr
+    )
+
+
+cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
+cnn_optimizer = tf.keras.optimizers.Adam()
+
+cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 noise_x = []
 CNN_accuracy = []
