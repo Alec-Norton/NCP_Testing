@@ -117,7 +117,7 @@ print("test loss, test acc:", results)
 
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
 
-model.save_weights('LTC_NCP_Model/saved_model.weights.h5')
+model.save_weights('LTC_FullyConnected_Model/saved_model.weights.h5')
 
-print("Saved LTC_NCP_Model")
+print("Saved LTC_FullyConnected_Model")
 model.summary()
