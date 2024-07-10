@@ -129,10 +129,14 @@ LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 1)
 CNN_accuracy.append(CNN_results[1])
 LTC_NCP_accuracy.append(LTC_NCP_results[1])
 
+
 for i in range(0, 50, 1):
     noise_copy = x_valid + np.random.normal(0, float(float(i) / 100), x_valid.shape)
     CNN_results = CNN_model.evaluate(x_valid, y_valid, verbose = 0)
     LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 0)
+    print("Noise: " + str(float(float(i)/100)))
+    print("CNN_accuracy: " + str(CNN_results[1]))
+    print("LTC_NCP accuracy: " + str(LTC_NCP_results[1]))
     noise_x.append(float(float(i) / 100))
     CNN_accuracy.append(CNN_results[1])
     LTC_NCP_accuracy.append(LTC_NCP_results[1])
