@@ -17,7 +17,7 @@ parser.add_argument("clipnorm")
 #CfC args
 parser.add_argument("batch_size")
 parser.add_argument("epochs")
-parser.add_argument("model_number")
+parser.add_argument("kfold")
 
 args = parser.parse_args()
 
@@ -31,6 +31,7 @@ from ncps.tf import LTC
 import matplotlib.pyplot as plt
 import glob
 import time 
+from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import train_test_split
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
@@ -45,7 +46,7 @@ keras = tf.keras
 #define a function to return a NCP CfC Model
 def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Set up architecture for Neural Circuit Policy
-    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size)
+    wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size, ncp_sparsity_level)
     #Begin constructing layer, starting with input
     
     '''model = tf.keras.models.Sequential(
@@ -172,12 +173,7 @@ for i in range(0, reshape - 1):
 y_train = array
 y_train = y_train.astype(np.int8)
 
-x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
-
-
-
-
-
+#x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
@@ -186,7 +182,7 @@ ncp_size = int(args.size)
 ncp_output_size = int(args.output_size)
 ncp_sparsity_level = float(args.sparsity)
 
-number_of_models = int(args.model_number)
+#number_of_models = int(args.model_number)
 batch_size = int(args.batch_size)
 epochs = int(args.epochs)
 
@@ -206,11 +202,35 @@ cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
 cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
+model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
+model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
+kf = KFold(n_splits = int(args.kfold))
+scores = []
+for train_index, test_index in kf.split(x_train, y_train):
+    print("Train index: ", train_index, "\n")
+    print("Test Index: ", test_index)
+
+    x_train, x_test, y_train, y_test = x_train[train_index], x_train[test_index], y_train[train_index], y_train[test_index]
+    model.fit(x_train, y_train, batch_size = 32, epochs = 20)
+    scores.append(model.evaluate(x_test, y_test)[1])
+
+model.fit(x_train, y_train)
+scores.append(model.evaluate(x_test, y_test)[1])
+
+print(np.mean(scores))
 
 
 
 
-score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
+
+
+
+
+
+
+
+#score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
 print("LTC_FullyConnected Training")
 print("\n")
