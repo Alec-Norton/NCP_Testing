@@ -135,6 +135,7 @@ cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+LTC_FullyConnected_model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 cnn_optimizer = tf.keras.optimizers.Adam()
 
