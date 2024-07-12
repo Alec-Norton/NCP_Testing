@@ -223,6 +223,9 @@ for train, test in kf.split(x_train, y_train):
     print(y_train[train])
     
     model = CFC_NCP(input, 100, 5, .2)
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
     model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
