@@ -10,6 +10,8 @@ import glob
 import time 
 from sklearn.model_selection import train_test_split
 
+import keras_spiking
+
 keras = tf.keras
 
 def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
@@ -88,9 +90,14 @@ def CNN(input):
 input = tf.keras.layers.Input(shape = (150, 8))
 LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
 LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
-CNN_model = CNN(input)
+energy = keras_spiking.ModelEnergy(LTC_NCP_model)
+energy.summary(print_warnings=False)
 
-tf.keras.utils.plot_model(LTC_NCP_model)
+wiring = ncps.wirings.FullyConnected(100, 5)
+wiring.build(8)
+wiring.draw_graph()
+
+
 
 
 

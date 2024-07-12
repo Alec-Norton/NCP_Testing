@@ -202,8 +202,6 @@ cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
 cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
-model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
@@ -212,11 +210,25 @@ scores = []
 for train, test in kf.split(x_train, y_train):
 
     model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
+    learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
+        base_lr, train_steps, decay_lr
+    )
+
+
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
     model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    print(f"    Train: index = {train}")
+    print(f"    Train: index = {test}")
+
+    print("X_train")
+    print(x_train[train])
+    print("Y_Train")
+    print(y_train[train])
 
 
-
-    model.fit(x_train[train], y_train[train], batch_size = 64, epochs = 20)
+    model.fit(x_train[train], y_train[train], batch_size = 1024, epochs = 1)
     scores.append(model.evaluate(x_train[test], y_train[test])[1])
 
 
