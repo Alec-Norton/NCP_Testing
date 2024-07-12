@@ -33,6 +33,7 @@ import glob
 import time 
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import train_test_split
+import gc
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
@@ -228,6 +229,8 @@ for train, test in kf.split(x_train, y_train):
 
     model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
     scores.append(model.evaluate(x_train[test], y_train[test])[1])
+    del model
+    gc.collect()
 
 
 print(scores)
@@ -254,4 +257,4 @@ print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm 
 print("\n")
 print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
 print("\n")
-print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(args.kfolds))
+print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(args.kfold))
