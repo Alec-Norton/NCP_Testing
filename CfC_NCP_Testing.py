@@ -125,13 +125,13 @@ def score(model, train_x, train_y, X_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('size_30sec_150ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
-X = pd.DataFrame()
+x_train = pd.DataFrame()
 for csv_file in csv_files:
     df = pd.read_csv(csv_file)
-    X = pd.concat([X, df])
+    x_train = pd.concat([x_train, df])
 
 
 
@@ -149,27 +149,29 @@ x_train = pd.concat([x_train, csv_file4])
 x_train = pd.concat([x_train, csv_file5])
 '''
 
-Y = X.iloc[:, [8, 9]]
-X.pop('chunk')
-X.pop('label')
+y_train = x_train.iloc[:, [8, 9]]
+x_train.pop('chunk')
+x_train.pop('label')
 
 
-X = np.array(X)
-reshape = int(X.shape[0]/150)
-x_train = X.reshape(reshape, 150, 8)
+x_train = np.array(x_train)
+print(x_train.shape)
+reshape = int(x_train.shape[0]/150)
+print(reshape)
+x_train = x_train.reshape(reshape, 150, 8)
 
-X = (X - np.mean(X, axis = 0)) / np.std(X, axis = 0)
+x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
-Y = np.array(Y)
-Y = Y.reshape(reshape, 150, 2)
+y_train = np.array(y_train)
+y_train = y_train.reshape(reshape, 150, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
-    array[i] = Y[i][0][1]
+    array[i] = y_train[i][0][1]
 
-Y = array
-Y = Y.astype(np.int8)
+y_train = array
+y_train = y_train.astype(np.int8)
 
 #x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
@@ -206,32 +208,28 @@ kf = KFold(n_splits = int(args.kfold), shuffle =True)
 model = CFC_NCP(input, 100, 5, .2)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-#model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, verbose = 1)
+model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, verbose = 1)
 
 scores = []
 
-for train, test in kf.split(X, Y):
+for train, test in kf.split(x_train, y_train):
 
     print(f"    Train: index = {train}")
     print(f"    Train: index = {test}")
 
-    #print("X_train")
-    #print(X[train])
-    #print("Y_Train")
-    #print(Y[train])
-
-    x_train = X[train]
-    y_train = Y[train]
-
-    x_test = X[test]
-    y_test = Y[test] 
+    print("X_train")
+    print(x_train[train])
+    print("Y_Train")
+    print(y_train[train])
+    
 
 
-    model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs)
-    scores.append(model.evaluate(x_test, y_test)[1])
+    model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
+    scores.append(model.evaluate(x_train[test], y_train[test])[1])
 
 
 print(np.mean(scores))
+
 
 
 
