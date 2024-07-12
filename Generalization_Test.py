@@ -181,6 +181,14 @@ for i in range(1, 90, 5):
     LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
     CNN_model = CNN(input)
 
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+    cnn_optimizer = tf.keras.optimizers.Adam()
+
+    cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
     CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
     LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
     LTC_FullyConnected_model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
