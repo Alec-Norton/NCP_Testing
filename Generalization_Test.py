@@ -175,8 +175,8 @@ print("Generalization Testing: ")
 
 print("Begin iterative generalization testing: ")
 
-for i in range(0, 90, 5):
-    x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = float(float(i)/100), shuffle = True)
+for i in range(1, 90, 5):
+    x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = float((i)/100), shuffle = True)
     LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
     LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
     CNN_model = CNN(input)
