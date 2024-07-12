@@ -208,7 +208,6 @@ kf = KFold(n_splits = int(args.kfold), shuffle =True)
 model = CFC_NCP(input, 100, 5, .2)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, verbose = 1)
 
 scores = []
 
@@ -222,6 +221,9 @@ for train, test in kf.split(x_train, y_train):
     print("Y_Train")
     print(y_train[train])
     
+    model = CFC_NCP(input, 100, 5, .2)
+    model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
 
 
     model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
