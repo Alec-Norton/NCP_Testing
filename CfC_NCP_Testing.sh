@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -N 1
 #SBATCH -n 10
-#SBATCH --mem=5g
+#SBATCH --mem=0
 #SBATCH -J "CfC_NCP_Testing - Alec Norton"
 #SBATCH -p short
 #SBATCH --gres=gpu:2
