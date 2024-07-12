@@ -228,6 +228,8 @@ for train, test in kf.split(x_train, y_train):
     scores.append(model.evaluate(x_train[test], y_train[test])[1])
 
 
+print(scores)
+print("Average: ")
 print(np.mean(scores))
 
 
