@@ -181,6 +181,10 @@ for i in range(1, 90, 5):
     LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
     CNN_model = CNN(input)
 
+    CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    LTC_FullyConnected_model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
     LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
     LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
     CNN_model.fit(x_train, y_train, batch_size = 64, epochs = 17)
