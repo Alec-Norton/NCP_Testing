@@ -205,20 +205,15 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
+model = CFC_NCP(input, 100, 5, .2)
+model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
+model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, verbose = 1)
 
 scores = []
+'''
 for train, test in kf.split(x_train, y_train):
 
-    model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
-    learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
-        base_lr, train_steps, decay_lr
-    )
-
-
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
-
-    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
-    model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
     print(f"    Train: index = {train}")
     print(f"    Train: index = {test}")
 
@@ -233,6 +228,8 @@ for train, test in kf.split(x_train, y_train):
 
 
 print(np.mean(scores))
+
+'''
 
 
 
@@ -252,4 +249,4 @@ print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm 
 print("\n")
 print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
 print("\n")
-print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(number_of_models))
+print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(args.kfolds))
