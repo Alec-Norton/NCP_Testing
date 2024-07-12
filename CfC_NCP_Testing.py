@@ -228,7 +228,7 @@ for train, test in kf.split(x_train, y_train):
     print(y_train[train])
 
 
-    model.fit(x_train[train], y_train[train], batch_size = 1024, epochs = 1)
+    model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
     scores.append(model.evaluate(x_train[test], y_train[test])[1])
 
 
