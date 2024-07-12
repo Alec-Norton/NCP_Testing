@@ -205,18 +205,20 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-kf = KFold(n_splits = int(args.kfold))
+kf = KFold(n_splits = int(args.kfold), shuffle =True)
+
+
 scores = []
-for train_index, test_index in kf.split(x_train, y_train):
-    print("Train index: ", train_index, "\n")
-    print("Test Index: ", test_index)
+for train, test in kf.split(x_train, y_train):
 
-    x_train, x_test, y_train, y_test = x_train[train_index], x_train[test_index], y_train[train_index], y_train[test_index]
-    model.fit(x_train, y_train, batch_size = 32, epochs = 20)
-    scores.append(model.evaluate(x_test, y_test)[1])
+    model = CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
+    model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-model.fit(x_train, y_train)
-scores.append(model.evaluate(x_test, y_test)[1])
+
+
+    model.fit(x_train[train], y_train[train], batch_size = 64, epochs = 20)
+    scores.append(model.evaluate(x_train[test], y_train[test])[1])
+
 
 print(np.mean(scores))
 
