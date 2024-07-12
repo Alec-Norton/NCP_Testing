@@ -166,7 +166,7 @@ cnn_optimizer = tf.keras.optimizers.Adam()
 cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 #CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-noise_x = []
+split_x = []
 CNN_accuracy = []
 LTC_NCP_accuracy = []
 LTC_FC_accuracy = []
@@ -191,7 +191,7 @@ for i in range(0, 90, 5):
     #print("Noise: " + str(float(float(i)/100)))
     #print("CNN_accuracy: " + str(CNN_results[1]))
     #print("LTC_NCP accuracy: " + str(LTC_NCP_results[1]))
-    noise_x.append(float(float(i) / 100))
+    split_x.append(float(float(i) / 100))
     CNN_accuracy.append(CNN_results[1])
     LTC_NCP_accuracy.append(LTC_NCP_results[1])
     LTC_FC_accuracy.append(LTC_FC_results[1])
@@ -204,6 +204,8 @@ for i in range(0, 90, 5):
 #plt.plot(noise_x, LTC_NCP_accuracy, label = "LTC_NCP", linestyle = ":")
 
 #plt.show(block = True)
+print("Split_x: ")
+
 print("CNN accuracy: ")
 for i in range(0, 100, 1):
     print(CNN_accuracy[i])
