@@ -254,10 +254,10 @@ print(np.mean(scores))
 
 #score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
-print("LTC_FullyConnected Training")
+print("LTC_NCP Training")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
 print("Size of Model: " + str(ncp_size) + " Output Size Of Model: " + str(ncp_output_size) + " NCP Sparsity Level: " + str(ncp_sparsity_level))
 print("\n")
-print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Models: " + str(args.kfold))
+print("Epochs: " + str(epochs) + " Batch Size: " + str(batch_size) + " Number Of Folds: " + str(args.kfold))

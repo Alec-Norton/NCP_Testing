@@ -149,22 +149,15 @@ train_steps = reshape // 64
 decay_lr = .66
 clipnorm = .9999
 
+
 learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
         base_lr, train_steps, decay_lr
     )
 
 
-cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
-cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-#LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-#LTC_FullyConnected_model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-cnn_optimizer = tf.keras.optimizers.Adam()
-
-cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
-#CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 split_x = []
 CNN_accuracy = []
@@ -181,17 +174,23 @@ for i in range(1, 90, 5):
     LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
     CNN_model = CNN(input)
 
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
-    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+    ncp_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+    ncp_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+    ltc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+    ltc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
     cnn_optimizer = tf.keras.optimizers.Adam()
 
     cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
     CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-    LTC_NCP_model.compile(cfc_optimizer, cfc_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-    LTC_FullyConnected_model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    LTC_FullyConnected_model.compile(ltc_optimizer, ltc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
     LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
     LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
