@@ -45,7 +45,7 @@ class CustomCallback(tf.keras.callbacks.Callback):
 
 keras = tf.keras
 #define a function to return a NCP CfC Model
-def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
+def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     #Set up architecture for Neural Circuit Policy
     wiring = ncps.wirings.AutoNCP(ncp_size, ncp_output_size, ncp_sparsity_level)
     #Begin constructing layer, starting with input
@@ -68,6 +68,54 @@ def CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     
     #Return model
     return model
+
+def LTC_FC(input, ncp_size, ncp_output_size):
+    #Set up architecture for Neural Circuit Policy
+    wiring = ncps.wirings.FullyConnected(ncp_size, ncp_output_size)
+    #Begin constructing layer, starting with input
+    
+    '''model = tf.keras.models.Sequential(
+        [
+            keras.layers.InputLayer(input_shape = (None, 8)),
+            CfC(wiring),
+            tf.keras.layers.Dense(1)
+        ]
+    )'''
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
+    x = LTC(wiring, return_sequences= True)(x)
+    x = keras.layers.Flatten()(x)
+    output = tf.keras.layers.Dense(4)(x)
+
+    model = tf.keras.Model(inputs = input, outputs = output)
+    
+    
+    #Return model
+    return model
+
+def CNN(input):
+    #Algorithm make up is CNN2-a from Trakoolqilaiwan et all.
+    #x = tf.keras.layers.Conv2D(32, 3)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
+    x = tf.keras.layers.Dropout(.5)(x)
+
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.Dropout(.5)(x)
+
+    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.MaxPool1D(3)(x)
+    x = tf.keras.layers.Dropout(.5)(x)
+
+    x = tf.keras.layers.Flatten()(x)
+
+    x = tf.keras.layers.Dense(256, activation = "relu")(x)
+    x = tf.keras.layers.Dense(256, activation = "relu")(x)
+
+    output = tf.keras.layers.Dense(4)(x)
+    
+    return tf.keras.Model(inputs = input, outputs = output)
 
 
 def eval(model, index_arg, train_x, train_y, opt, loss_fun, batch_size, epochs):
@@ -206,7 +254,7 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
-model = CFC_NCP(input, 100, 5, .2)
+model = LTC_NCP(input, 100, 5, .2)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
@@ -222,7 +270,7 @@ for train, test in kf.split(x_train, y_train):
     print("Y_Train")
     print(y_train[train])
     
-    model = CFC_NCP(input, 100, 5, .2)
+    model = LTC_NCP(input, 100, 5, .2)
     cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
     cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
