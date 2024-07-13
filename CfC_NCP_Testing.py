@@ -254,7 +254,7 @@ cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
-model = LTC_NCP(input, 100, 5, .2)
+model = LTC_FC(input, 100, 5)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
@@ -270,7 +270,7 @@ for train, test in kf.split(x_train, y_train):
     print("Y_Train")
     print(y_train[train])
     
-    model = LTC_NCP(input, 100, 5, .2)
+    model = LTC_FC(input, 100, 5)
     cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 
     cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
