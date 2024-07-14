@@ -168,7 +168,7 @@ print("Generalization Testing: ")
 
 print("Begin iterative generalization testing: ")
 
-for i in range(1, 90, 5):
+for i in range(1, 80, 5):
     x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = float((i)/100), shuffle = True)
     LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
     LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
@@ -216,17 +216,19 @@ for i in range(1, 90, 5):
 
 #plt.show(block = True)
 print("Split_x: ")
+for i in split_x:
+    print(i)
 
 print("CNN accuracy: ")
-for i in range(0, 100, 1):
-    print(CNN_accuracy[i])
+for i in CNN_accuracy:
+    print(i)
 
 print("LTC_NCP accuracy")
-for i in range(0, 100, 1):
-    print(LTC_NCP_accuracy[i])
+for i in LTC_NCP_accuracy:
+    print(i)
 
 print("LTC_FC_accuracy")
-for i in range(0, 100, 1):
-    print(LTC_FC_accuracy[i])
+for i in LTC_FC_accuracy:
+    print(i)
 
 print("Finished, did guassian")
