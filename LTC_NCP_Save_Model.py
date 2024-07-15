@@ -91,7 +91,7 @@ x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size 
 
 input = tf.keras.layers.Input(shape = (150, 8))
 
-model = LTC_NCP(input, 100, 5, .5)
+model = LTC_Fully(input, 100, 5, .5)
 
 base_lr = .02
 train_steps = reshape // 64
@@ -117,7 +117,7 @@ print("test loss, test acc:", results)
 
 print("Max Accuracy Of Model: " + str(np.max(test_accuracies)))
 
-model.save_weights('LTC_NCP_Model/saved_model.weights.h5')
+model.save_weights('LTC_FullyConnected_Model/saved_model.weights.h5')
 
-print("Saved LTC_NCP_Model")
+print("Saved LTC_FC_Model")
 model.summary()
