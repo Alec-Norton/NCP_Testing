@@ -99,18 +99,16 @@ LTC_FC_model.summary()
 CNN_model = CNN(input)
 CNN_model.summary()
 
-wiring = ncps.wirings.AutoNCP(100, 5, .2)
+wiring = ncps.wirings.AutoNCP(100, 5, .5)
 wiring.build(32)
 connections = wiring.synapse_count + wiring.sensory_synapse_count
-print("Connections: " + str(connections))
+print("NCP_Connections: " + str(connections))
 
-sns.set_style("white")
-plt.figure(figsize=(12, 12))
-legend_handles = wiring.draw_graph(layout='shell',neuron_colors={"command": "tab:cyan"})
-plt.legend(handles=legend_handles, loc="upper center", bbox_to_anchor=(1, 1))
-sns.despine(left=True, bottom=True)
-plt.tight_layout()
-plt.show()
+wiring = ncps.wirings.FullyConnected(100, 5)
+wiring.build(32)
+connections = wiring.synapse_count + wiring.sensory_synapse_count
+print("FC_Connections: " + str(connections))
+
 
 
 
