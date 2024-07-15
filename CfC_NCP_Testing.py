@@ -255,6 +255,7 @@ cnn_optimizer = tf.keras.optimizers.Adam()
 cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
+'''
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
 model = CNN(input)
@@ -294,6 +295,12 @@ print(scores)
 print("Average: ")
 print(np.mean(scores))
 
+'''
+
+
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+
+score(LTC_NCP(input, 100, 5, .5), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
 
 
 
@@ -308,7 +315,7 @@ print(np.mean(scores))
 
 #score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
-print("CNN Training")
+print("LTC-NCP Training")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
