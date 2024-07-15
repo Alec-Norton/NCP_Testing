@@ -141,7 +141,7 @@ def eval(model, index_arg, train_x, train_y, opt, loss_fun, batch_size, epochs):
 
 #Based on the model_number, create a model and train on specified optimizer, loss_function, validation_split, batch_size, and some epochs
 #Then return the mean and standard deviation of the accuracy of these models. 
-def score(model, train_x, train_y, X_test, y_test, opt, loss_fun, model_number, batch_size, epochs):
+def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, batch_size, epochs):
     acc = []
     dur = []
     for i in range(model_number):
