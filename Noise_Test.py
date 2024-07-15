@@ -110,7 +110,7 @@ y_train = y_train.astype(np.int8)
 input = tf.keras.layers.Input(shape = (150, 8))
 
 
-LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
+LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
 LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
 print("\n")
 print("Loading Models: ")
@@ -153,8 +153,7 @@ print("Noise_Testing: ")
 noise_x.append(0)
 CNN_results = CNN_model.evaluate(x_valid, y_valid, verbose = 1)
 LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 1)
-CNN_accuracy.append(CNN_results[1])
-LTC_NCP_accuracy.append(LTC_NCP_results[1])
+
 
 print("Begin iterative noise testing: ")
 
