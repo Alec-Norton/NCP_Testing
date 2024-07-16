@@ -207,14 +207,14 @@ x_train = np.array(x_train)
 print(x_train.shape)
 reshape = int(x_train.shape[0]/10)
 print(reshape)
-x_train = x_train.reshape(reshape, 10, 8)
+x_train = x_train.reshape(reshape, 100, 8)
 
 x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
 y_train = np.array(y_train)
-y_train = y_train.reshape(reshape, 10, 2)
+y_train = y_train.reshape(reshape, 100, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
@@ -224,7 +224,7 @@ y_train = y_train.astype(np.int8)
 
 #x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-input = tf.keras.layers.Input(shape = (10, 8))
+input = tf.keras.layers.Input(shape = (100, 8))
 
 #CfC NCP
 ncp_size = int(args.size)
