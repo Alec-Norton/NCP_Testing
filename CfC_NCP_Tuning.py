@@ -48,16 +48,16 @@ x_train.pop('label')
 
 x_train = np.array(x_train)
 print(x_train.shape)
-reshape = int(x_train.shape[0]/150)
+reshape = int(x_train.shape[0]/10)
 print(reshape)
-x_train = x_train.reshape(reshape, 150, 8)
+x_train = x_train.reshape(reshape, 10, 8)
 
 x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
 y_train = np.array(y_train)
-y_train = y_train.reshape(reshape, 150, 2)
+y_train = y_train.reshape(reshape, 10, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
@@ -69,7 +69,7 @@ x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_siz
 
 batch_size = 512
 
-input = tf.keras.layers.Input(shape = (150, 8))
+input = tf.keras.layers.Input(shape = (10, 8))
 
 def CfC_NCP_model_builder(hp):
     '''
@@ -90,16 +90,16 @@ def CfC_NCP_model_builder(hp):
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
     '''
-    batch_size = hp.Int('batch_size', min_value = 128, max_value = 256, step = 32)
+    batch_size = hp.Int('batch_size', min_value = 32, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
-    wiring = ncps.wirings.AutoNCP(units = 70, output_size = 5, sparsity_level = .3)
+    wiring = ncps.wirings.AutoNCP(units = 100, output_size = 5, sparsity_level = .5)
     
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
-    x = CfC(wiring, return_sequences= True)(x)
+    x = LTC(wiring, return_sequences= True)(x)
     x = tf.keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
 
@@ -123,7 +123,7 @@ def CfC_NCP_model_builder(hp):
     
     return model
 
-tuner = kt.Hyperband(CfC_NCP_model_builder,
+'''tuner = kt.Hyperband(CfC_NCP_model_builder,
                      objective = 'val_accuracy',
                      max_epochs = 10,
                      factor = 3,
@@ -131,13 +131,14 @@ tuner = kt.Hyperband(CfC_NCP_model_builder,
                      distribution_strategy=tf.distribute.MirroredStrategy(),
                      directory = '',
                      project_name = "CfC_NCP_Tuning_Project")
-                    
+ '''
+tuner = kt.GridSearch(CfC_NCP_model_builder)                   
 
 stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
 stop_early2 = tf.keras.callbacks.EarlyStopping('loss', mode = "min", patience = 5)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
+tuner.search(x_train, y_train, epochs = 5, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
@@ -160,7 +161,7 @@ eval_result = hypermodel.evaluate(x_valid, y_valid)
 
 hypermodel.summary()
 
-print("CfC_NCP ")
+print("LTC_NCP ")
 '''
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
@@ -181,12 +182,10 @@ The hyperparameter search is complete. Optimal values below:
 '''
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
-      units = {best_hps.get('units')},
-      output_size = {best_hps.get('output_size')},
-      sparsity = {best_hps.get('sparsity_level')},
-      mode = {best_hps.get('mode')},
-      backbone_activation  = {best_hps.get('backbone_activation')}
       learning_rate = {best_hps.get('learning_rate')},
+      batch_size = {best_hps.get('batch_size')},
+      clipnorm = {best_hps.get('clipnorm')},
+      decay_lr = {best_hps.get('decay_lr')}
 
 
 
