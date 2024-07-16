@@ -174,7 +174,7 @@ def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
