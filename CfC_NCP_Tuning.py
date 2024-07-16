@@ -90,7 +90,7 @@ def CfC_NCP_model_builder(hp):
     mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
     backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
     '''
-    batch_size = hp.Int('batch_size', min_value = 32, max_value = 256, step = 32)
+    #batch_size = hp.Int('batch_size', min_value = 32, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
@@ -183,7 +183,6 @@ The hyperparameter search is complete. Optimal values below:
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
       learning_rate = {best_hps.get('learning_rate')},
-      batch_size = {best_hps.get('batch_size')},
       clipnorm = {best_hps.get('clipnorm')},
       decay_lr = {best_hps.get('decay_lr')}
 
