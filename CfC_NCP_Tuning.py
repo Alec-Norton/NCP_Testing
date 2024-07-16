@@ -124,7 +124,7 @@ def CfC_NCP_model_builder(hp):
     
     return model
 
-tuner = kt.Hyperband(CfC_NCP_model_builder,
+'''tuner = kt.Hyperband(CfC_NCP_model_builder,
                      objective = 'val_accuracy',
                      max_epochs = 5,
                      factor = 3,
@@ -132,8 +132,8 @@ tuner = kt.Hyperband(CfC_NCP_model_builder,
                      distribution_strategy=tf.distribute.MirroredStrategy(),
                      directory = '',
                      project_name = "CfC_NCP_Tuning_Project")
- 
-#tuner = kt.GridSearch(CfC_NCP_model_builder, objective = 'val_accuracy', max_trials = 20)                   
+ '''
+tuner = kt.GridSearch(CfC_NCP_model_builder, objective = 'val_accuracy', max_trials = 20)                   
 
 stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
