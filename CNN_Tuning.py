@@ -136,5 +136,6 @@ hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 print("[test loss, test accuracy]:", eval_result)
 
+print("10ts")
 
 
