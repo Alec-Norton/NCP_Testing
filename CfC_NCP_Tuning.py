@@ -81,21 +81,21 @@ def CfC_NCP_model_builder(hp):
     recurrent_command_synapses = hp.Int('recurrent_command_synapses', min_value = 1, max_value = int(1.8 * command_neuron))
     motor_fanin = hp.Int('motor_fanin', min_value = 1, max_value = int(.9 * command_neuron), step = 1)
     '''
-    '''
-    units = hp.Int('units', min_value = 50, max_value = 100, step = 2)
+    
+    units = hp.Int('units', min_value = 50, max_value = 200, step = 2)
     output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 2)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
 
-    mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
-    backbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
-    '''
+    #mode = hp.Choice('mode', values = ["default", "pure", "no_gate"])
+    #ackbone_activation = hp.Choice('backbone_activation', values = ["silu", "relu", "tanh", "lecun_tanh", "softplus"])
+    
     #batch_size = hp.Int('batch_size', min_value = 32, max_value = 256, step = 32)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)
     #backbone_dropout = hp.Float('backbone_dropout', min_value = 0, max_value = .9, step = .1)
-    wiring = ncps.wirings.AutoNCP(units = 100, output_size = 5, sparsity_level = .5)
+    #wiring = ncps.wirings.AutoNCP(units = 100, output_size = 5, sparsity_level = .5)
     
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
@@ -105,16 +105,16 @@ def CfC_NCP_model_builder(hp):
 
     model = tf.keras.Model(inputs = input, outputs = output)
 
-    hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
+    #hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
+    #clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
 
     train_steps = reshape // batch_size
-    decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
+    #decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
 
 
 
     learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
-        hp_learning_rate, train_steps, decay_lr
+        .02, train_steps, .9999
     )
 
     model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm),
@@ -182,9 +182,9 @@ The hyperparameter search is complete. Optimal values below:
 '''
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
-      learning_rate = {best_hps.get('learning_rate')},
-      clipnorm = {best_hps.get('clipnorm')},
-      decay_lr = {best_hps.get('decay_lr')}
+      units = {best_hps.get('units')},
+      output_size = {best_hps.get('output_size')},
+      sparsity_level = {best_hps.get('sparsity_level')}
 
 
 
