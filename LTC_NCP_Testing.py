@@ -22,7 +22,7 @@ class CustomCallback(tf.keras.callbacks.Callback):
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
 
 
 x_train = pd.DataFrame()
@@ -98,7 +98,7 @@ def LTC_NCP_model_builder(hp):
     #hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
     hp_learning_rate = .02
     decay_lr = .66
-    clipnorm = .9999
+    hp_clipnorm = .9999
     #hp_clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
     train_steps = reshape // batch_size
     #decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
