@@ -99,7 +99,11 @@ def CNN_model_builder(hp):
 tuner = kt.Hyperband(CNN_model_builder,
                      objective = 'val_accuracy',
                      max_epochs = 10,
-                     factor = 3)
+                     factor = 3,
+                     overwrite = True,
+                     distribution_strategy=tf.distribute.MirroredStrategy(),
+                     directory = '',
+                     project_name = "CNN_Tuning_Project")
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
 
