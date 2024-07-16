@@ -274,12 +274,12 @@ for train, test in kf.split(x_train, y_train):
     print("Y_Train")
     print(y_train[train])
     
-    #model = LTC_NCP(input, 100, 5, .5)
+    model = LTC_NCP(input, 300, 5, .5)
     #model = LTC_FC(input, 100, 5)
 
-    model = CNN(input)
-    #cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
-    #cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+    #model = CNN(input)
+    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
     cnn_optimizer = tf.keras.optimizers.Adam()
     cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
@@ -318,7 +318,7 @@ print(np.mean(scores))
 
 #score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
-print("CNN Cross Fold Training: 100ts")
+print("LTC-NCP Cross Fold Training: 100ts")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
