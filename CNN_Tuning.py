@@ -58,9 +58,7 @@ y_train = y_train.astype(np.int8)
 x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
 
-
 input = tf.keras.layers.Input(shape = (10, 8))
-
 def CNN_model_builder(hp):
     
     hp_c1 = hp.Int('conv units', min_value=32, max_value = 128, step = 32)
