@@ -77,9 +77,9 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    #units = hp.Int('units', min_value = 50, max_value = 100, step = 5)
-    #output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 5)
-    #sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
+    units = hp.Int('units', min_value = 50, max_value = 100, step = 5)
+    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 5)
+    sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     
     wiring = ncps.wirings.AutoNCP(units = 70, output_size = 5, sparsity_level = .3)
 
@@ -95,10 +95,13 @@ def LTC_NCP_model_builder(hp):
 
     model = tf.keras.Model(inputs = input, outputs = output)
 
-    hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
-    hp_clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
+    #hp_learning_rate = hp.Choice('learning_rate', values = [.001, .005, .01, .015, .02])
+    hp_learning_rate = .02
+    decay_lr = .66
+    clipnorm = .9999
+    #hp_clipnorm = hp.Float('clipnorm', min_value = .1, max_value = 1, step = .3)
     train_steps = reshape // batch_size
-    decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
+    #decay_lr = hp.Float('decay_lr', min_value = 0, max_value = 1, step = .25)
 
 
 
@@ -171,9 +174,9 @@ The hyperparameter search is complete. Optimal values below:
 print("LTC_NCP_Testing")
 print(f"""
 The hyperparameter search is complete. Optimal values below: 
-      learning_rate = {best_hps.get('learning_rate')},
-      clipnorm = {best_hps.get('clipnorm')},
-      decay_lr = {best_hps.get('decay_lr')}
+      units = {best_hps.get('units')},
+      output_size = {best_hps.get('output_size')},
+      sparsity_level = {best_hps.get('sparsity_level')}
 
 
 
