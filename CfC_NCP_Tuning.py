@@ -116,6 +116,7 @@ def CfC_NCP_model_builder(hp):
     learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
         .02, train_steps, .9999
     )
+    clipnorm = .9999
 
     model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm),
                   loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True),
