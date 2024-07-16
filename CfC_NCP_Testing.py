@@ -101,7 +101,7 @@ def CNN(input):
     x = tf.keras.layers.Dropout(.5)(x)
 
     x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
     x = tf.keras.layers.Conv1D(32, 3)(input)
@@ -110,8 +110,8 @@ def CNN(input):
 
     x = tf.keras.layers.Flatten()(x)
 
-    x = tf.keras.layers.Dense(256, activation = "relu")(x)
-    x = tf.keras.layers.Dense(256, activation = "relu")(x)
+    x = tf.keras.layers.Dense(384, activation = "relu")(x)
+    x = tf.keras.layers.Dense(384, activation = "relu")(x)
 
     output = tf.keras.layers.Dense(4)(x)
     

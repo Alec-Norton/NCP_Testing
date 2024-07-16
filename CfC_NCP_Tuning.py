@@ -132,7 +132,7 @@ def CfC_NCP_model_builder(hp):
                      directory = '',
                      project_name = "CfC_NCP_Tuning_Project")
  '''
-tuner = kt.GridSearch(CfC_NCP_model_builder)                   
+tuner = kt.GridSearch(CfC_NCP_model_builder, objective = 'val_accuracy')                   
 
 stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
