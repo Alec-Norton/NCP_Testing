@@ -99,7 +99,7 @@ LTC_FC_model.summary()
 CNN_model = CNN(input)
 CNN_model.summary()
 
-wiring = ncps.wirings.AutoNCP(100, 5, .5)
+wiring = ncps.wirings.AutoNCP(100, 5, 0.5)
 wiring.build(32)
 connections = wiring.synapse_count + wiring.sensory_synapse_count
 print("NCP_Connections: " + str(connections))
