@@ -205,7 +205,7 @@ x_train.pop('label')
 
 x_train = np.array(x_train)
 print(x_train.shape)
-reshape = int(x_train.shape[0]/10)
+reshape = int(x_train.shape[0]/100)
 print(reshape)
 x_train = x_train.reshape(reshape, 100, 8)
 
