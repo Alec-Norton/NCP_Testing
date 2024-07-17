@@ -77,11 +77,11 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    units = hp.Int('units', min_value = 50, max_value = 100, step = 5)
+    units = hp.Int('units', min_value = 50, max_value = 200, step = 5)
     output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 5)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     
-    wiring = ncps.wirings.AutoNCP(units = 70, output_size = 5, sparsity_level = .3)
+    wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
 
     #backbone_units = hp.Int('backbone_units', min_value = 64, max_value = 256, step = 32)
     #backbone_layers = hp.Int('backbone_layer', min_value = 0, max_value = 3, step = 1)

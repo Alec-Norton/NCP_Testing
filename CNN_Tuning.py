@@ -132,11 +132,23 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 hypermodel.summary()
 
+
+
 # Retrain the model
 hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
 
 eval_result = hypermodel.evaluate(x_valid, y_valid)
 print("[test loss, test accuracy]:", eval_result)
+
+
+print(f"""
+The hyperparameter search is complete. The optimal number of units in the conv layer
+layer is {best_hps.get('conv units')} and the best pool kernel is {best_hps.get('pool kernel')},
+and the best dropout rate is {best_hps.get('dropout rate')}, and the best number of neurons in the dense layer is
+{best_hps.get('1st dense units')}, and the best  number of neurons in the second dense layer is {best_hps.get('2nd dense units')}
+and the best optimal learning rate for the optimizer
+is {best_hps.get('learning_rate')}. 
+""")
 
 print("10ts")
 
