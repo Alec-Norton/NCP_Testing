@@ -59,6 +59,8 @@ def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
     )'''
     x = tf.keras.layers.Conv1D(32, 3)(input)
     x = tf.keras.layers.MaxPool1D(3)(x)
+    x = tf.keras.layers.Conv1D(32, 3)(x)
+    x = tf.keras.layers.MaxPool1D(3)(x)
     x = LTC(wiring, return_sequences= True)(x)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
@@ -174,7 +176,7 @@ def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('size_02sec_10ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -205,16 +207,16 @@ x_train.pop('label')
 
 x_train = np.array(x_train)
 print(x_train.shape)
-reshape = int(x_train.shape[0]/100)
+reshape = int(x_train.shape[0]/10)
 print(reshape)
-x_train = x_train.reshape(reshape, 100, 8)
+x_train = x_train.reshape(reshape, 10, 8)
 
 x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
 y_train = np.array(y_train)
-y_train = y_train.reshape(reshape, 100, 2)
+y_train = y_train.reshape(reshape, 10, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
@@ -224,7 +226,7 @@ y_train = y_train.astype(np.int8)
 
 #x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-input = tf.keras.layers.Input(shape = (100, 8))
+input = tf.keras.layers.Input(shape = (10, 8))
 
 #CfC NCP
 ncp_size = int(args.size)
@@ -237,7 +239,7 @@ epochs = int(args.epochs)
 
 base_lr = float(args.base_lr)
 train_steps = reshape // batch_size
-decay_lr = .66
+decay_lr = .5
 clipnorm = float(args.clipnorm)
 
 
@@ -258,11 +260,12 @@ cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
-model = LTC_NCP(input, 100, 5, .5)
+model = LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
 scores = []
+'''
 
 for train, test in kf.split(x_train, y_train):
 
@@ -274,7 +277,7 @@ for train, test in kf.split(x_train, y_train):
     print("Y_Train")
     print(y_train[train])
     
-    model = LTC_NCP(input, 300, 5, .5)
+    model = LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
     #model = LTC_FC(input, 100, 5)
 
     #model = CNN(input)
@@ -297,13 +300,14 @@ for train, test in kf.split(x_train, y_train):
 print(scores)
 print("Average: ")
 print(np.mean(scores))
+'''
 
 
 
 
-#x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-#score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
+score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
 
 
 
