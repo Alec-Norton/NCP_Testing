@@ -96,22 +96,22 @@ def LTC_FC(input, ncp_size, ncp_output_size):
 def CNN(input):
     #Algorithm make up is CNN2-a from Trakoolqilaiwan et all.
     #x = tf.keras.layers.Conv2D(32, 3)(input)
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.Dropout(.2)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.Dropout(.2)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.Dropout(.2)(x)
 
     x = tf.keras.layers.Flatten()(x)
 
-    x = tf.keras.layers.Dense(384, activation = "relu")(x)
-    x = tf.keras.layers.Dense(384, activation = "relu")(x)
+    x = tf.keras.layers.Dense(128, activation = "relu")(x)
+    x = tf.keras.layers.Dense(320, activation = "relu")(x)
 
     output = tf.keras.layers.Dense(4)(x)
     
@@ -276,14 +276,14 @@ for train, test in kf.split(x_train, y_train):
     print(y_train[train])
     
     #model = LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
-    model = LTC_FC(input, 100, 5)
+    #model = LTC_FC(input, 100, 5)
 
-    #model = CNN(input)
-    cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
-    cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+    model = CNN(input)
+    #cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+    #cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-    #cnn_optimizer = tf.keras.optimizers.Adam()
-    #cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+    cnn_optimizer = tf.keras.optimizers.Adam()
+    cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
     model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
     #model.compile(cnn_optimizer, cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
@@ -320,7 +320,7 @@ print(np.mean(scores))
 
 #score(CFC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_test, y_test, cfc_optimizer, cfc_loss, number_of_models, batch_size, epochs)
 
-print("LTC-FC Cross Fold Training: 10ts")
+print("CNN Cross Fold Training: 10ts")
 print("\n")
 print("base_lr = " + str(base_lr) + " decay_lr = " + str(decay_lr) + " clipnorm = " + str(clipnorm))
 print("\n")
