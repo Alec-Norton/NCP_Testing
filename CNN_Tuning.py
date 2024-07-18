@@ -78,8 +78,8 @@ def CNN_model_builder(hp):
 
     x = tf.keras.layers.Flatten()(x)
 
-    hp_dense1 = hp.Int('1st dense units', min_value = 128, max_value = 512, step = 64)
-    hp_dense2 = hp.Int('2nd dense units', min_value = 128, max_value = 512, step = 64)
+    hp_dense1 = hp.Int('1st dense units', min_value = 32, max_value = 512, step = 64)
+    hp_dense2 = hp.Int('2nd dense units', min_value = 32, max_value = 512, step = 64)
 
     x = tf.keras.layers.Dense(hp_dense1, activation = "relu")(x)
     x = tf.keras.layers.Dense(hp_dense2, activation = "relu")(x)
@@ -151,5 +151,5 @@ is {best_hps.get('learning_rate')}.
 """)
 
 print("10ts")
-
+print("Reduced amount of conv/pool/dropout layers")
 
