@@ -282,11 +282,11 @@ for train, test in kf.split(x_train, y_train):
     cfc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
     cfc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-    cnn_optimizer = tf.keras.optimizers.Adam()
-    cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+    #cnn_optimizer = tf.keras.optimizers.Adam()
+    #cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-    #model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-    model.compile(cnn_optimizer, cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    #model.compile(cnn_optimizer, cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
     model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
