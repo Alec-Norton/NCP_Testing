@@ -120,7 +120,7 @@ tuner = kt.Hyperband(LTC_NCP_model_builder,
                      max_epochs = 5,
                      overwrite = True,
                      directory = '',
-                     distribution_strategy = tf.distribute.MirroredStrategy,
+                     distribution_strategy = tf.distribute.MirroredStrategy(),
                      project_name = "LTC_NCP_Tuning_Project")
 
 '''tuner = kt.GridSearch(LTC_NCP_model_builder,
