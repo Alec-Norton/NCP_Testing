@@ -77,8 +77,8 @@ def LTC_NCP_model_builder(hp):
     
     wiring = ncps.wirings.NCP(inter_neurons = inter_neuron, command_neurons = command_neuron, motor_neurons = motor_neuron, sensory_fanout = sensory_fanout, inter_fanout = inter_fanout, recurrent_command_synapses= recurrent_command_synapses, motor_fanin= motor_fanin)
     '''
-    units = hp.Int('units', min_value = 50, max_value = 200, step = 5)
-    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 5)
+    units = hp.Int('units', min_value = 50, max_value = 200, step = 10)
+    output_size = hp.Int('output_size', min_value = 5, max_value = units - 3, step = 10)
     sparsity_level = hp.Float('sparsity_level', min_value = .1, max_value = .9, step = .1)
     
     wiring = ncps.wirings.AutoNCP(units = units, output_size = output_size, sparsity_level = sparsity_level)
@@ -115,16 +115,24 @@ def LTC_NCP_model_builder(hp):
     
     return model
 
-tuner = kt.GridSearch(LTC_NCP_model_builder,
+tuner = kt.Hyperband(LTC_NCP_model_builder,
+                     objective = 'val_accuracy',
+                     max_epochs = 5,
+                     overwrite = True,
+                     directory = '',
+                     distribution_strategy = tf.distribute.MirroredStrategy,
+                     project_name = "LTC_NCP_Tuning_Project")
+
+'''tuner = kt.GridSearch(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
                      overwrite = True,
                      directory = '',
                      distribution_strategy=tf.distribute.MirroredStrategy(),
                      project_name = "LTC_NCP_Tuning_Project")
-
+'''
 stop_early = CustomCallback()
 stop_early1 = tf.keras.callbacks.TerminateOnNaN()
-stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 5)
+stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", patience = 2)
 
 print("Begin searching")
 
