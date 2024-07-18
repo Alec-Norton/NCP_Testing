@@ -68,13 +68,13 @@ def CNN_model_builder(hp):
     x = tf.keras.layers.MaxPool1D(pool_size = hp_p1)(x)
     x = tf.keras.layers.Dropout(rate = hp_d1)(x)
 
-    x = tf.keras.layers.Conv1D(filters = hp_c1, kernel_size = 3)(input)
-    x = tf.keras.layers.MaxPool1D(pool_size = hp_p1)(x)
-    x = tf.keras.layers.Dropout(rate = hp_d1)(x)
+    #x = tf.keras.layers.Conv1D(filters = hp_c1, kernel_size = 3)(input)
+    #x = tf.keras.layers.MaxPool1D(pool_size = hp_p1)(x)
+    #x = tf.keras.layers.Dropout(rate = hp_d1)(x)
 
-    x = tf.keras.layers.Conv1D(filters = hp_c1, kernel_size = 3)(input)
-    x = tf.keras.layers.MaxPool1D(pool_size = 2)(x)
-    x = tf.keras.layers.Dropout(rate = hp_d1)(x)
+    #x = tf.keras.layers.Conv1D(filters = hp_c1, kernel_size = 3)(input)
+    #x = tf.keras.layers.MaxPool1D(pool_size = 2)(x)
+    #x = tf.keras.layers.Dropout(rate = hp_d1)(x)
 
     x = tf.keras.layers.Flatten()(x)
 
