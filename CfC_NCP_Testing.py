@@ -256,14 +256,14 @@ cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
 
-#kf = KFold(n_splits = int(args.kfold), shuffle =True)
+kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
 model = LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
 scores = []
-'''
+
 
 for train, test in kf.split(x_train, y_train):
 
@@ -298,14 +298,14 @@ for train, test in kf.split(x_train, y_train):
 print(scores)
 print("Average: ")
 print(np.mean(scores))
-'''
 
 
 
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
+#x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+
+#score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
 
 
 
