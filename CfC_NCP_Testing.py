@@ -174,7 +174,7 @@ def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -256,7 +256,7 @@ cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 
 
-kf = KFold(n_splits = int(args.kfold), shuffle =True)
+#kf = KFold(n_splits = int(args.kfold), shuffle =True)
 
 model = LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level)
 model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
