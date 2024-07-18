@@ -58,7 +58,7 @@ def LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level):
         ]
     )'''
     x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
+    x = tf.keras.layers.MaxPool1D(3)(x)
     x = LTC(wiring, return_sequences= True)(x)
     x = keras.layers.Flatten()(x)
     output = tf.keras.layers.Dense(4)(x)
@@ -174,7 +174,7 @@ def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('size_02sec_10ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -264,7 +264,7 @@ model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategori
 
 scores = []
 
-
+'''
 for train, test in kf.split(x_train, y_train):
 
     print(f"    Train: index = {train}")
@@ -298,14 +298,14 @@ for train, test in kf.split(x_train, y_train):
 print(scores)
 print("Average: ")
 print(np.mean(scores))
+'''
 
 
 
 
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-#x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
-
-#score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
+score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
 
 
 
