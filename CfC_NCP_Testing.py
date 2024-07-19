@@ -96,22 +96,22 @@ def LTC_FC(input, ncp_size, ncp_output_size):
 def CNN(input):
     #Algorithm make up is CNN2-a from Trakoolqilaiwan et all.
     #x = tf.keras.layers.Conv2D(32, 3)(input)
-    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.2)(x)
+    x = tf.keras.layers.Dropout(.3)(x)
 
-    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.2)(x)
+    x = tf.keras.layers.Dropout(.3)(x)
 
-    x = tf.keras.layers.Conv1D(96, 3)(input)
+    x = tf.keras.layers.Conv1D(64, 3)(input)
     x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.2)(x)
+    x = tf.keras.layers.Dropout(.3)(x)
 
     x = tf.keras.layers.Flatten()(x)
 
-    x = tf.keras.layers.Dense(128, activation = "relu")(x)
-    x = tf.keras.layers.Dense(320, activation = "relu")(x)
+    x = tf.keras.layers.Dense(480, activation = "relu")(x)
+    x = tf.keras.layers.Dense(480, activation = "relu")(x)
 
     output = tf.keras.layers.Dense(4)(x)
     
@@ -174,7 +174,7 @@ def score(model, train_x, train_y, x_test, y_test, opt, loss_fun, model_number, 
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
 #csv_files2 = glob.glob('size_30sec_150ts_stride_03ts/sub_3*.csv')
 
 x_train = pd.DataFrame()
@@ -264,7 +264,7 @@ model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategori
 
 scores = []
 
-'''
+
 for train, test in kf.split(x_train, y_train):
 
     print(f"    Train: index = {train}")
@@ -285,8 +285,8 @@ for train, test in kf.split(x_train, y_train):
     cnn_optimizer = tf.keras.optimizers.Adam()
     cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-    model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-    #model.compile(cnn_optimizer, cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    #model.compile(cfc_optimizer, cfc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+    model.compile(cnn_optimizer, cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
 
     model.fit(x_train[train], y_train[train], batch_size = batch_size, epochs = epochs)
@@ -298,14 +298,13 @@ for train, test in kf.split(x_train, y_train):
 print(scores)
 print("Average: ")
 print(np.mean(scores))
-'''
 
 
 
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+#x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
-score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
+#score(LTC_NCP(input, ncp_size, ncp_output_size, ncp_sparsity_level), x_train, y_train, x_valid, y_valid, cfc_optimizer, cfc_loss, 1, batch_size, epochs)
 
 
 
