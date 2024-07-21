@@ -400,7 +400,7 @@ for i in range(1, 80, 5):
 
     
 '''
-split = 4
+split = 3
 train_subjects = 0
 x_train = pd.DataFrame()
 for i in range(split*2, 10):
@@ -595,6 +595,8 @@ print(LTC_NCP_results[1])
 '''
 
 '''
+
+'''
 #plt.show(block = True)
 print("Amount of training subjects: ")
 for i in split_x:
@@ -612,6 +614,6 @@ for i in LTC_NCP_accuracy:
 print("LTC_FC_accuracy")
 for i in LTC_FC_accuracy:
     print(i)
-
+'''
 print("Finished, did GENERALIZATION")
 
