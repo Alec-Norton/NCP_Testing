@@ -96,7 +96,7 @@ CNN_accuracy = []
 LTC_FC_accuracy = []
 split_x = []
 
-#'''
+'''
 
 zero_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_0*.csv')
 one_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_1*.csv')
@@ -109,8 +109,8 @@ seven_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_0
 eight_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_8*.csv')
 nine_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_9*.csv')
 
-#'''
 '''
+#'''
 zero_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_0*.csv')
 one_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_1*.csv')
 two_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_2*.csv')
@@ -122,13 +122,14 @@ seven_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_7*.csv')
 eight_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_8*.csv')
 nine_subjects = glob.glob('size_30sec_150ts_stride_03ts/sub_9*.csv')
 
-'''
+#'''
 print("Generalization Testing: ")
 
 print("Begin iterative generalization testing: ")
 
 
 for split in range(1, 5):
+    print("Loading Training data for split: " +str(split))
     train_subjects = 0
     x_train = pd.DataFrame()
     for i in range(split*2, 10):
@@ -186,6 +187,7 @@ for split in range(1, 5):
                 train_subjects = train_subjects + 1
 
     print("# Of Train Subjects: " + str(train_subjects))
+    print("Loading Testing data for split: " +str(split))
 
     test_subjects = 0
     x_test = pd.DataFrame()
@@ -333,15 +335,22 @@ for split in range(1, 5):
     LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
     LTC_FullyConnected_model.compile(ltc_optimizer, ltc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-    LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
-    LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
-    CNN_model.fit(x_train, y_train, batch_size = 64, epochs = 17)
+
+    print("LTC_NCP_Model Training")
+    LTC_NCP_model.fit(x_train, y_train, batch_size = 128, epochs = 20)
+    print("LTC-FC Model Train")
+    LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 128, epochs = 20)
+    print("CNN_model train")
+    CNN_model.fit(x_train, y_train, batch_size = 128, epochs = 17)
     
+    print("CNN Eval")
     CNN_results = CNN_model.evaluate(x_test, y_test, verbose = 1)
+    print("LTC-NCP eval")
     LTC_NCP_results = LTC_NCP_model.evaluate(x_test, y_test, verbose = 1)
+    print("LTC-FC eval")
     LTC_FC_results = LTC_FullyConnected_model.evaluate(x_test, y_test, verbose = 1)
 
-    
+    print("adding results")
     LTC_NCP_accuracy.append(LTC_NCP_results[1])
     LTC_FC_accuracy.append(LTC_FC_results[1])
     CNN_accuracy.append(CNN_results[1])
