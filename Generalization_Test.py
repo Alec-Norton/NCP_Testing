@@ -337,11 +337,11 @@ for split in range(1, 5):
 
 
     print("LTC_NCP_Model Training")
-    LTC_NCP_model.fit(x_train, y_train, batch_size = 128, epochs = 20)
+    LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
     print("LTC-FC Model Train")
-    LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 128, epochs = 20)
+    LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
     print("CNN_model train")
-    CNN_model.fit(x_train, y_train, batch_size = 128, epochs = 17)
+    CNN_model.fit(x_train, y_train, batch_size = 64, epochs = 17)
     
     print("CNN Eval")
     CNN_results = CNN_model.evaluate(x_test, y_test, verbose = 1)
