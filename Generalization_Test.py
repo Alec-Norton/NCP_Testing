@@ -557,6 +557,8 @@ LTC_NCP_results = LTC_NCP_model.evaluate(x_test, y_test, verbose = 1)
 #LTC_FC_results = LTC_FullyConnected_model.evaluate(x_test, y_test, verbose = 1)
 
 print("adding results")
+print("Ran training subjects except 9")
+print("Training subjects: " + str(train_subjects))
 LTC_NCP_accuracy.append(LTC_NCP_results[1])
 print(LTC_NCP_results[1])
 #LTC_FC_accuracy.append(LTC_FC_results[1])
