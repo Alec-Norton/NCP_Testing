@@ -400,7 +400,7 @@ for i in range(1, 80, 5):
 
     
 '''
-split = 2
+split = 1
 train_subjects = 0
 x_train = pd.DataFrame()
 for i in range(split*2, 10):
