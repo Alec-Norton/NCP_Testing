@@ -400,126 +400,61 @@ for i in range(1, 80, 5):
 
     
 '''
-split = 1
 train_subjects = 0
 x_train = pd.DataFrame()
-for i in range(split*2, 10):
-    if(i == 1):
-        for csv_file in one_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
-    elif(i == 2):
-        for csv_file in two_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in zero_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 3):
-        for csv_file in three_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in one_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 4):
-        for csv_file in four_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in two_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 5):
-        for csv_file in five_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in three_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 6):
-        for csv_file in six_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in four_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 7):
-        for csv_file in seven_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in five_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 8):
-        for csv_file in eight_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in six_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-    elif(i == 9):
-        for csv_file in nine_subjects:
-            df = pd.read_csv(csv_file)
-            x_train = pd.concat([x_train, df])
-            train_subjects = train_subjects + 1
+for csv_file in seven_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
-print("# Of Train Subjects: " + str(train_subjects))
-print("Loading Testing data for split: " +str(split))
+for csv_file in eight_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+
 
 test_subjects = 0
 x_test = pd.DataFrame()
-for i in range(0, split*2):
-    if(i == 0):
-        for csv_file in zero_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-    elif(i == 1):
-        for csv_file in one_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
+for csv_file in nine_subjects:
+    df = pd.read_csv(csv_file)
+    x_test = pd.concat([x_test, df])
+    test_subjects = test_subjects + 1
 
-    elif(i == 2):
-        for csv_file in two_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-    elif(i == 3):
-        for csv_file in three_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-    elif(i == 4):
-        for csv_file in four_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-    elif(i == 5):
-        for csv_file in five_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-    elif(i == 6):
-        for csv_file in six_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-    elif(i == 7):
-        for csv_file in seven_subjects:
-            df = pd.read_csv(csv_file)
-            x_test = pd.concat([x_test, df])
-            test_subjects = test_subjects + 1
-
-
-
-print("# Of Test Subjects: " + str(test_subjects))
-
-
-
-
-
-#csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
-#x_train = csv_file.copy()
 
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
@@ -585,13 +520,49 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
     )
 
 LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
-ncp_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
-ncp_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
-LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
-LTC_NCP_results = LTC_NCP_model.evaluate(x_test, y_test, verbose = 1)
+LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
+CNN_model = CNN(input)
 
+
+
+ncp_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+ncp_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+ltc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+
+ltc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+cnn_optimizer = tf.keras.optimizers.Adam()
+
+cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+
+CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+LTC_FullyConnected_model.compile(ltc_optimizer, ltc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
+
+print("LTC_NCP_Model Training")
+LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
+#print("LTC-FC Model Train")
+#LTC_FullyConnected_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
+#print("CNN_model train")
+#CNN_model.fit(x_train, y_train, batch_size = 64, epochs = 17)
+
+#print("CNN Eval")
+#CNN_results = CNN_model.evaluate(x_test, y_test, verbose = 1)
+print("LTC-NCP eval")
+LTC_NCP_results = LTC_NCP_model.evaluate(x_test, y_test, verbose = 1)
+#print("LTC-FC eval")
+#LTC_FC_results = LTC_FullyConnected_model.evaluate(x_test, y_test, verbose = 1)
+
+print("adding results")
+LTC_NCP_accuracy.append(LTC_NCP_results[1])
 print(LTC_NCP_results[1])
+#LTC_FC_accuracy.append(LTC_FC_results[1])
+#CNN_accuracy.append(CNN_results[1])
+
+
 '''
 
 '''
