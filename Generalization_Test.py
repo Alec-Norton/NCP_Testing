@@ -402,10 +402,20 @@ for i in range(1, 80, 5):
 '''
 train_subjects = 0
 x_train = pd.DataFrame()
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
+for csv_file in csv_files:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+
+
+
+'''
 for csv_file in zero_subjects:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
     train_subjects = train_subjects + 1
+
 
 for csv_file in one_subjects:
     df = pd.read_csv(csv_file)
@@ -456,8 +466,7 @@ for csv_file in nine_subjects:
     test_subjects = test_subjects + 1
 
 
-np.random.shuffle(x_train)
-
+'''
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
 x_train.pop('label')
@@ -485,10 +494,10 @@ y_train = y_train.astype(np.int8)
 input = tf.keras.layers.Input(shape = (150, 8))
 
 
+'''
 y_test = x_test.loc[:, ['chunk', 'label']]
 x_test.pop('chunk')
 x_test.pop('label')
-
 
 x_test = np.array(x_test)
 print(x_test.shape)
@@ -508,6 +517,9 @@ for i in range(0, reshape - 1):
 
 y_test = array
 y_test = y_test.astype(np.int8)
+'''
+
+x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
 
 
@@ -524,6 +536,8 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
 LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
 #LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
 #CNN_model = CNN(input)
+
+
 
 
 
@@ -545,6 +559,7 @@ LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.Spars
 
 
 
+
 print("LTC_NCP_Model Training")
 LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
 #print("LTC-FC Model Train")
@@ -555,7 +570,7 @@ LTC_NCP_model.fit(x_train, y_train, batch_size = 64, epochs = 20)
 #print("CNN Eval")
 #CNN_results = CNN_model.evaluate(x_test, y_test, verbose = 1)
 print("LTC-NCP eval")
-LTC_NCP_results = LTC_NCP_model.evaluate(x_test, y_test, verbose = 1)
+LTC_NCP_results = LTC_NCP_model.evaluate(x_valid, y_valid, verbose = 1)
 #print("LTC-FC eval")
 #LTC_FC_results = LTC_FullyConnected_model.evaluate(x_test, y_test, verbose = 1)
 
