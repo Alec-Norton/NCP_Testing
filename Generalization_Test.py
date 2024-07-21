@@ -456,6 +456,8 @@ for csv_file in nine_subjects:
     test_subjects = test_subjects + 1
 
 
+np.random.shuffle(x_train)
+
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
 x_train.pop('label')
@@ -520,8 +522,8 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
     )
 
 LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
-LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
-CNN_model = CNN(input)
+#LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
+#CNN_model = CNN(input)
 
 
 
@@ -537,9 +539,10 @@ cnn_optimizer = tf.keras.optimizers.Adam()
 
 cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
-CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+#CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 LTC_NCP_model.compile(ncp_optimizer, ncp_loss,  metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-LTC_FullyConnected_model.compile(ltc_optimizer, ltc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+#LTC_FullyConnected_model.compile(ltc_optimizer, ltc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+
 
 
 print("LTC_NCP_Model Training")
