@@ -93,14 +93,69 @@ def CNN(input):
 #TODO: Load a Time-Series Application
 
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+zero_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_0*.csv')
+one_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_1*.csv')
+two_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_2*.csv')
+three_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_3*.csv')
+four_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_4*.csv')
+five_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_5*.csv')
+six_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_6*.csv')
+seven_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_7*.csv')
+eight_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_8*.csv')
+nine_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_9*.csv')
 
 
-
+'''
 x_train = pd.DataFrame()
 for csv_file in csv_files:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
 
+'''
+train_subjects = 0
+x_train = pd.DataFrame()
+for csv_file in zero_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in one_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in two_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in three_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in four_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in five_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in six_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in seven_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in eight_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in nine_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+
+print("Train_subjects: " + str(train_subjects))
 
 
 
