@@ -20,16 +20,86 @@ import keras_tuner as kt
 csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
 
 
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+zero_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_0*.csv')
+one_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_1*.csv')
+two_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_2*.csv')
+three_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_3*.csv')
+four_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_4*.csv')
+five_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_5*.csv')
+six_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_6*.csv')
+seven_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_7*.csv')
+eight_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_8*.csv')
+nine_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_9*.csv')
+
+
+'''
 x_train = pd.DataFrame()
 for csv_file in csv_files:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
 
+'''
+train_subjects = 0
+test_subjects = 0
+x_train = pd.DataFrame()
+x_test = pd.DataFrame()
+
+
+for csv_file in one_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in two_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in three_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in four_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in five_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in six_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in seven_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in eight_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in nine_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
 
 
-#csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
-#x_train = csv_file.copy()
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_07.csv')
+x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
+#x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+#x_test = pd.concat([x_test, df])
+
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
+x_train = pd.concat([x_train, df])
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+x_train = pd.concat([x_train, df])
+train_subjects = train_subjects + 2
+test_subjects = test_subjects + 1
+
+
 
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
@@ -38,16 +108,16 @@ x_train.pop('label')
 
 x_train = np.array(x_train)
 print(x_train.shape)
-reshape = int(x_train.shape[0]/10)
+reshape = int(x_train.shape[0]/150)
 print(reshape)
-x_train = x_train.reshape(reshape, 10, 8)
+x_train = x_train.reshape(reshape, 150, 8)
 
-x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
+#x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
 y_train = np.array(y_train)
-y_train = y_train.reshape(reshape, 10, 2)
+y_train = y_train.reshape(reshape, 150, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
@@ -55,10 +125,38 @@ for i in range(0, reshape - 1):
 y_train = array
 y_train = y_train.astype(np.int8)
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
 
-input = tf.keras.layers.Input(shape = (10, 8))
+y_test = x_test.loc[:, ['chunk', 'label']]
+x_test.pop('chunk')
+x_test.pop('label')
+
+
+x_test = np.array(x_test)
+print(x_test.shape)
+reshape = int(x_test.shape[0]/150)
+print(reshape)
+x_test = x_test.reshape(reshape, 150, 8)
+
+#x_test = (x_test - np.mean(x_test, axis = 0)) / np.std(x_test, axis = 0)
+
+x_test = x_test.astype(np.float32)
+
+y_test = np.array(y_test)
+y_test = y_test.reshape(reshape, 150, 2)
+array = np.zeros(reshape, )
+for i in range(0, reshape - 1):
+    array[i] = y_test[i][0][1]
+
+y_test = array
+y_test = y_test.astype(np.int8)
+
+
+
+
+input = tf.keras.layers.Input(shape = (150, 8))
+
+
 def CNN_model_builder(hp):
     
     hp_c1 = hp.Int('conv units', min_value=32, max_value = 128, step = 32)
@@ -107,21 +205,14 @@ tuner = kt.Hyperband(CNN_model_builder,
 
 stop_early = tf.keras.callbacks.EarlyStopping(monitor = 'val_loss', patience = 5)
 
-tuner.search(x_train, y_train, epochs = 50, validation_data = (x_valid, y_valid), callbacks = [stop_early])
+tuner.search(x_train, y_train, epochs = 50, validation_data = (x_test, y_test), callbacks = [stop_early])
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
-print(f"""
-The hyperparameter search is complete. The optimal number of units in the conv layer
-layer is {best_hps.get('conv units')} and the best pool kernel is {best_hps.get('pool kernel')},
-and the best dropout rate is {best_hps.get('dropout rate')}, and the best number of neurons in the dense layer is
-{best_hps.get('1st dense units')}, and the best  number of neurons in the second dense layer is {best_hps.get('2nd dense units')}
-and the best optimal learning rate for the optimizer
-is {best_hps.get('learning_rate')}. 
-""")
+
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid))
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_test, y_test))
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -135,9 +226,9 @@ hypermodel.summary()
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid))
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_test, y_test))
 
-eval_result = hypermodel.evaluate(x_valid, y_valid)
+eval_result = hypermodel.evaluate(x_test, y_test)
 print("[test loss, test accuracy]:", eval_result)
 
 
@@ -150,6 +241,6 @@ and the best optimal learning rate for the optimizer
 is {best_hps.get('learning_rate')}. 
 """)
 
-print("10ts")
+print("150ts")
 print("Reduced amount of conv/pool/dropout layers")
 
