@@ -184,7 +184,7 @@ reshape = int(x_train.shape[0]/150)
 print(reshape)
 x_train = x_train.reshape(reshape, 150, 8)
 
-x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
+#x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
@@ -210,7 +210,7 @@ reshape = int(x_test.shape[0]/150)
 print(reshape)
 x_test = x_test.reshape(reshape, 150, 8)
 
-x_test = (x_test - np.mean(x_test, axis = 0)) / np.std(x_test, axis = 0)
+#x_test = (x_test - np.mean(x_test, axis = 0)) / np.std(x_test, axis = 0)
 
 x_test = x_test.astype(np.float32)
 
