@@ -73,11 +73,11 @@ def CNN(input):
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(x)
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
+    x = tf.keras.layers.Conv1D(32, 3)(x)
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
@@ -258,13 +258,13 @@ CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.k
 LTC_NCP_model.compile(optimizer = ncp_optimizer, loss = ncp_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 LTC_FullyConnected_model.compile(optimizer=fc_optimizer, loss = fc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-#CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=5, verbose = 1)
-LTC_NCP_model.fit(x_train, y_train, validation_split= .1, batch_size=  64, epochs=20, verbose = 1)
+CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=5, verbose = 1)
+#LTC_NCP_model.fit(x_train, y_train, validation_split= .1, batch_size=  64, epochs=20, verbose = 1)
 
 
 
-results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
-#results = CNN_model.evaluate(x_test, y_test, 64, 1)
+#results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
+results = CNN_model.evaluate(x_test, y_test, 64, 1)
 
 print("LTC-NCP")
 print("Train_subjects: " + str(train_subjects))
