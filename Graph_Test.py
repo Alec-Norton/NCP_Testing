@@ -71,13 +71,13 @@ def CNN(input):
     x = tf.keras.layers.MaxPool1D(3)(x)
     x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(2)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    #x = tf.keras.layers.Conv1D(32, 3)(input)
+    #x = tf.keras.layers.MaxPool1D(2)(x)
+    #x = tf.keras.layers.Dropout(.5)(x)
 
-    x = tf.keras.layers.Conv1D(32, 3)(input)
-    x = tf.keras.layers.MaxPool1D(3)(x)
-    x = tf.keras.layers.Dropout(.5)(x)
+    #x = tf.keras.layers.Conv1D(32, 3)(input)
+    #x = tf.keras.layers.MaxPool1D(3)(x)
+    #x = tf.keras.layers.Dropout(.5)(x)
 
     x = tf.keras.layers.Flatten()(x)
 

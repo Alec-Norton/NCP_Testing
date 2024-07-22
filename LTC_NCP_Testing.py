@@ -22,18 +22,86 @@ class CustomCallback(tf.keras.callbacks.Callback):
 
 #TODO: Load a Time-Series Application
 
-csv_files = glob.glob('/home/arnorton/NCP_Testing/size_02sec_10ts_stride_03ts/*.csv')
+csv_files = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/*.csv')
+zero_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_0*.csv')
+one_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_1*.csv')
+two_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_2*.csv')
+three_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_3*.csv')
+four_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_4*.csv')
+five_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_5*.csv')
+six_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_6*.csv')
+seven_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_7*.csv')
+eight_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_8*.csv')
+nine_subjects = glob.glob('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_9*.csv')
 
 
+'''
 x_train = pd.DataFrame()
 for csv_file in csv_files:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
 
-batch_size = 224
+'''
+train_subjects = 0
+test_subjects = 0
+x_train = pd.DataFrame()
+x_test = pd.DataFrame()
 
-#csv_file = pd.read_csv('size_30sec_150ts_stride_03ts\sub_1.csv')
-#x_train = csv_file.copy()
+
+for csv_file in one_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in two_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in three_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in four_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in five_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in six_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in seven_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in eight_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+for csv_file in nine_subjects:
+    df = pd.read_csv(csv_file)
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
+
+
+
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_07.csv')
+x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
+#x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+#x_test = pd.concat([x_test, df])
+
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
+x_train = pd.concat([x_train, df])
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+x_train = pd.concat([x_train, df])
+train_subjects = train_subjects + 2
+test_subjects = test_subjects + 1
+
+
 
 y_train = x_train.loc[:, ['chunk', 'label']]
 x_train.pop('chunk')
@@ -42,16 +110,16 @@ x_train.pop('label')
 
 x_train = np.array(x_train)
 print(x_train.shape)
-reshape = int(x_train.shape[0]/10)
+reshape = int(x_train.shape[0]/150)
 print(reshape)
-x_train = x_train.reshape(reshape, 10, 8)
+x_train = x_train.reshape(reshape, 150, 8)
 
-x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
+#x_train = (x_train - np.mean(x_train, axis = 0)) / np.std(x_train, axis = 0)
 
 x_train = x_train.astype(np.float32)
 
 y_train = np.array(y_train)
-y_train = y_train.reshape(reshape, 10, 2)
+y_train = y_train.reshape(reshape, 150, 2)
 array = np.zeros(reshape, )
 for i in range(0, reshape - 1):
     array[i] = y_train[i][0][1]
@@ -59,11 +127,39 @@ for i in range(0, reshape - 1):
 y_train = array
 y_train = y_train.astype(np.int8)
 
-x_train, x_valid, y_train, y_valid = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+
+
+y_test = x_test.loc[:, ['chunk', 'label']]
+x_test.pop('chunk')
+x_test.pop('label')
+
+
+x_test = np.array(x_test)
+print(x_test.shape)
+reshape = int(x_test.shape[0]/150)
+print(reshape)
+x_test = x_test.reshape(reshape, 150, 8)
+
+#x_test = (x_test - np.mean(x_test, axis = 0)) / np.std(x_test, axis = 0)
+
+x_test = x_test.astype(np.float32)
+
+y_test = np.array(y_test)
+y_test = y_test.reshape(reshape, 150, 2)
+array = np.zeros(reshape, )
+for i in range(0, reshape - 1):
+    array[i] = y_test[i][0][1]
+
+y_test = array
+y_test = y_test.astype(np.int8)
 
 
 
-input = tf.keras.layers.Input(shape = (10, 8))
+
+input = tf.keras.layers.Input(shape = (150, 8))
+
+batch_size = 64
+
 
 def LTC_NCP_model_builder(hp):
     '''
@@ -117,7 +213,7 @@ def LTC_NCP_model_builder(hp):
 
 tuner = kt.Hyperband(LTC_NCP_model_builder,
                      objective = 'val_accuracy',
-                     max_epochs = 5,
+                     max_epochs = 10,
                      overwrite = True,
                      directory = '',
                      distribution_strategy = tf.distribute.MirroredStrategy(),
@@ -136,13 +232,13 @@ stop_early2 = tf.keras.callbacks.EarlyStopping(monitor = 'loss', mode = "min", p
 
 print("Begin searching")
 
-tuner.search(x_train, y_train, epochs = 5, validation_data = (x_valid, y_valid), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
+tuner.search(x_train, y_train, epochs = 5, validation_data = (x_test, y_test), callbacks = [stop_early, stop_early1, stop_early2], verbose = 1, batch_size = batch_size)
 
 best_hps = tuner.get_best_hyperparameters(num_trials = 1)[0]
 
 
 model = tuner.hypermodel.build(best_hps)
-history = model.fit(x_train, y_train, epochs=20, validation_data = (x_valid, y_valid), verbose = 1, batch_size = batch_size)
+history = model.fit(x_train, y_train, epochs=20, validation_data = (x_test, y_test), verbose = 1, batch_size = batch_size)
 
 val_acc_per_epoch = history.history['val_accuracy']
 best_epoch = val_acc_per_epoch.index(max(val_acc_per_epoch)) + 1
@@ -154,9 +250,9 @@ hypermodel = tuner.hypermodel.build(best_hps)
 
 
 # Retrain the model
-hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_valid, y_valid), verbose = 1, batch_size = batch_size)
+hypermodel.fit(x_train, y_train, epochs=best_epoch, validation_data = (x_test, y_test), verbose = 1, batch_size = batch_size)
 
-eval_result = hypermodel.evaluate(x_valid, y_valid)
+eval_result = hypermodel.evaluate(x_test, y_test)
 
 hypermodel.summary()
 
@@ -188,4 +284,4 @@ The hyperparameter search is complete. Optimal values below:
 '''
 print('Best epoch: %d' % (best_epoch,))
 print("[test loss, test accuracy]:", eval_result)
-print("10ts")
+print("150ts")
