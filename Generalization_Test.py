@@ -118,8 +118,8 @@ x_train = pd.DataFrame()
 x_test = pd.DataFrame()
 for csv_file in zero_subjects:
     df = pd.read_csv(csv_file)
-    x_train = pd.concat([x_train, df])
-    train_subjects = train_subjects + 1
+    x_test = pd.concat([x_test, df])
+    test_subjects = test_subjects + 1
 for csv_file in one_subjects:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
@@ -153,10 +153,11 @@ for csv_file in eight_subjects:
     x_train = pd.concat([x_train, df])
     train_subjects = train_subjects + 1
 
+
 for csv_file in nine_subjects:
     df = pd.read_csv(csv_file)
-    x_test = pd.concat([x_test, df])
-    test_subjects = test_subjects + 1
+    x_train = pd.concat([x_train, df])
+    train_subjects = train_subjects + 1
 
 
 
