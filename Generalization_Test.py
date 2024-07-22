@@ -165,11 +165,11 @@ x_test = pd.concat([x_train, df])
 #x_test = pd.concat([x_test, df])
 
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
-x_test = pd.concat([x_test, df])
+x_train = pd.concat([x_train, df])
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
-x_test = pd.concat([x_test, df])
-train_subjects = train_subjects + 0
-test_subjects = test_subjects + 3
+x_train = pd.concat([x_train, df])
+train_subjects = train_subjects + 2
+test_subjects = test_subjects + 1
 
 
 
@@ -230,7 +230,7 @@ input = tf.keras.layers.Input(shape = (150, 8))
 
 LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
 CNN_model = CNN(input)
-LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
+#LTC_FullyConnected_model = LTC_FullyConnected(input, 100, 5, .2)
 
 base_lr = .02
 train_steps = reshape // 64
@@ -245,8 +245,8 @@ learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
     )
 
 
-fc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
-fc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
+#fc_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
+#fc_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 ncp_optimizer = tf.keras.optimizers.Adam(learning_rate_fn, clipnorm = clipnorm)
 ncp_loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
@@ -256,15 +256,15 @@ cnn_loss_fun = tf.keras.losses.SparseCategoricalCrossentropy(from_logits = True)
 
 CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 LTC_NCP_model.compile(optimizer = ncp_optimizer, loss = ncp_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
-LTC_FullyConnected_model.compile(optimizer=fc_optimizer, loss = fc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
+#LTC_FullyConnected_model.compile(optimizer=fc_optimizer, loss = fc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-#CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=20, verbose = 1)
-LTC_NCP_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=20, verbose = 1)
+CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=5, verbose = 1)
+#LTC_NCP_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=5, verbose = 1)
 
 
 
-results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
-#results = CNN_model.evaluate(x_test, y_test, 64, 1)
+#results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
+results = CNN_model.evaluate(x_test, y_test, 64, 1)
 
 print("LTC-NCP")
 print("Train_subjects: " + str(train_subjects))
