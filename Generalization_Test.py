@@ -160,8 +160,7 @@ for csv_file in nine_subjects:
 
 
 
-print("Train_subjects: " + str(train_subjects))
-print("Test_subjects: " + str(test_subjects))
+
 
 
 
@@ -254,4 +253,6 @@ LTC_NCP_model.fit(x_train, y_train, 64, 20, 1)
 
 results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
 
+print("Train_subjects: " + str(train_subjects))
+print("Test_subjects: " + str(test_subjects))
 print("Accuracy: " + str(results[1]))
