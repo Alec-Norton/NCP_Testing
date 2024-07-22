@@ -158,12 +158,18 @@ for csv_file in nine_subjects:
 
 
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_07.csv')
-x_test = pd.concat([x_train, df])
+x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
+#x_test = pd.concat([x_test, df])
+#df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+#x_test = pd.concat([x_test, df])
+
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
-x_test = pd.concat([x_train, df])
+x_train = pd.concat([x_train, df])
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
-x_test = pd.concat([x_train, df])
-test_subjects = test_subjects + 3
+x_train = pd.concat([x_train, df])
+train_subjects = train_subjects + 2
+test_subjects = test_subjects + 1
 
 
 
@@ -252,12 +258,15 @@ CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.k
 LTC_NCP_model.compile(optimizer = ncp_optimizer, loss = ncp_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 LTC_FullyConnected_model.compile(optimizer=fc_optimizer, loss = fc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-#CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=20, verbose = 1)
-LTC_NCP_model.fit(x_train, y_train, validation_split= .1, batch_size=  64, epochs=20, verbose = 1)
+CNN_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epochs=20, verbose = 1)
+#LTC_NCP_model.fit(x_train, y_train, validation_split= .1, batch_size=  64, epochs=20, verbose = 1)
 
 
-results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
 
+#results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
+results = CNN_model.evaluate(x_test, y_test, 64, 1)
+
+print("CNN")
 print("Train_subjects: " + str(train_subjects))
 print("Test_subjects: " + str(test_subjects))
 print("Accuracy: " + str(results[1]))
