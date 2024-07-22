@@ -90,7 +90,7 @@ def CNN(input):
 
 
 input = tf.keras.layers.Input(shape = (150, 8))
-LTC_NCP_model = LTC_NCP(input, 100, 5, .2)
+LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
 LTC_NCP_model.summary()
 
 LTC_FC_model = LTC_FullyConnected(input, 100, 5, .2)
@@ -109,6 +109,15 @@ wiring.build(32)
 connections = wiring.synapse_count + wiring.sensory_synapse_count
 print("FC_Connections: " + str(connections))
 
+
+energy = keras_spiking.ModelEnergy(CNN_model)
+energy.summary(print_warnings=False)
+
+energy = keras_spiking.ModelEnergy(LTC_NCP_model)
+energy.summary(print_warnings=False)
+
+energy = keras_spiking.ModelEnergy(LTC_FC_model)
+energy.summary(print_warnings=False)
 
 
 

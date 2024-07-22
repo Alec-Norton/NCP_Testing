@@ -113,7 +113,9 @@ for csv_file in csv_files:
 
 '''
 train_subjects = 0
+test_subjects = 0
 x_train = pd.DataFrame()
+x_test = pd.DataFrame()
 for csv_file in zero_subjects:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
@@ -150,12 +152,16 @@ for csv_file in eight_subjects:
     df = pd.read_csv(csv_file)
     x_train = pd.concat([x_train, df])
     train_subjects = train_subjects + 1
+
 for csv_file in nine_subjects:
     df = pd.read_csv(csv_file)
-    x_train = pd.concat([x_train, df])
-    train_subjects = train_subjects + 1
+    x_test = pd.concat([x_test, df])
+    test_subjects = test_subjects + 1
+
+
 
 print("Train_subjects: " + str(train_subjects))
+print("Test_subjects: " + str(test_subjects))
 
 
 
@@ -185,6 +191,33 @@ y_train = y_train.astype(np.int8)
 
 
 
+y_test = x_test.loc[:, ['chunk', 'label']]
+x_test.pop('chunk')
+x_test.pop('label')
+
+
+x_test = np.array(x_test)
+print(x_test.shape)
+reshape = int(x_test.shape[0]/150)
+print(reshape)
+x_test = x_test.reshape(reshape, 150, 8)
+
+x_test = (x_test - np.mean(x_test, axis = 0)) / np.std(x_test, axis = 0)
+
+x_test = x_test.astype(np.float32)
+
+y_test = np.array(y_test)
+y_test = y_test.reshape(reshape, 150, 2)
+array = np.zeros(reshape, )
+for i in range(0, reshape - 1):
+    array[i] = y_test[i][0][1]
+
+y_test = array
+y_test = y_test.astype(np.int8)
+
+
+
+
 input = tf.keras.layers.Input(shape = (150, 8))
 
 LTC_NCP_model = LTC_NCP(input, 100, 5, .5)
@@ -196,7 +229,7 @@ train_steps = reshape // 64
 decay_lr = .66
 clipnorm = .9999
 
-x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
+#x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size = .33, shuffle = True)
 
 
 learning_rate_fn = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -217,7 +250,7 @@ CNN_model.compile(optimizer = cnn_optimizer, loss = cnn_loss_fun, metrics = tf.k
 LTC_NCP_model.compile(optimizer = ncp_optimizer, loss = ncp_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 LTC_FullyConnected_model.compile(optimizer=fc_optimizer, loss = fc_loss, metrics = tf.keras.metrics.SparseCategoricalAccuracy())
 
-LTC_NCP_model.fit(x_train, y_train, 65, 20, 1)
+LTC_NCP_model.fit(x_train, y_train, 64, 20, 1)
 
 results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
 
