@@ -158,7 +158,7 @@ for csv_file in nine_subjects:
 
 
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_07.csv')
-x_test = pd.concat([x_test, df])
+x_test = pd.concat([x_train, df])
 #df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
 #x_test = pd.concat([x_test, df])
 #df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
