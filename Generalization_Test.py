@@ -161,7 +161,9 @@ df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_07
 x_test = pd.concat([x_train, df])
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
 x_test = pd.concat([x_train, df])
-test_subjects = test_subjects + 2
+df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
+x_test = pd.concat([x_train, df])
+test_subjects = test_subjects + 3
 
 
 
