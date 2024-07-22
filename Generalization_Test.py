@@ -165,11 +165,11 @@ x_test = pd.concat([x_train, df])
 #x_test = pd.concat([x_test, df])
 
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_01.csv')
-x_train = pd.concat([x_train, df])
+x_test = pd.concat([x_test, df])
 df = pd.read_csv('/home/arnorton/NCP_Testing/size_30sec_150ts_stride_03ts/sub_05.csv')
 x_train = pd.concat([x_train, df])
-train_subjects = train_subjects + 2
-test_subjects = test_subjects + 1
+train_subjects = train_subjects + 1
+test_subjects = test_subjects + 2
 
 
 
@@ -266,7 +266,7 @@ LTC_NCP_model.fit(x_train, y_train, validation_split= .33, batch_size=  64, epoc
 results = LTC_NCP_model.evaluate(x_test, y_test, 64, 1)
 #results = CNN_model.evaluate(x_test, y_test, 64, 1)
 
-print("CNN")
+print("LTC-NCP")
 print("Train_subjects: " + str(train_subjects))
 print("Test_subjects: " + str(test_subjects))
 print("Accuracy: " + str(results[1]))
